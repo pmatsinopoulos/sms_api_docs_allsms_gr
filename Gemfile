@@ -1,6 +1,8 @@
-ruby '>= 2.6'
 source 'https://rubygems.org'
 
+ruby '3.1.4'
+
+gem 'dotenv'
 # Middleman
 gem 'middleman', '~> 4.4'
 gem 'middleman-syntax', '~> 3.2'
@@ -10,4 +12,4 @@ gem 'rouge', '~> 3.21'
 gem 'redcarpet', '~> 3.6.0'
 gem 'nokogiri', '~> 1.13.3'
 gem 'sass'
-gem 'webrick'
+gem 'puma'

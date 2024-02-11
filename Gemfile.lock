@@ -80,10 +80,9 @@ GEM
     middleman-syntax (3.3.0)
       middleman-core (>= 3.2)
       rouge (~> 3.2)
-    mini_portile2 (2.8.0)
     minitest (5.17.0)
-    nokogiri (1.13.9)
-      mini_portile2 (~> 2.8.0)
+    nio4r (2.7.0)
+    nokogiri (1.13.9-x86_64-darwin)
       racc (~> 1.4)
     padrino-helpers (0.15.2)
       i18n (>= 0.6.7, < 2)
@@ -93,6 +92,8 @@ GEM
     parallel (1.22.1)
     parslet (2.0.0)
     public_suffix (5.0.1)
+    puma (6.4.2)
+      nio4r (~> 2.0)
     racc (1.6.0)
     rack (2.2.6.2)
     rb-fsevent (0.11.2)
@@ -125,21 +126,22 @@ GEM
     zeitwerk (2.6.0)
 
 PLATFORMS
-  ruby
+  x86_64-darwin-21
 
 DEPENDENCIES
+  dotenv
   middleman (~> 4.4)
   middleman-autoprefixer (~> 3.0)
   middleman-sprockets (~> 4.1)
   middleman-syntax (~> 3.2)
   nokogiri (~> 1.13.3)
+  puma
   redcarpet (~> 3.6.0)
   rouge (~> 3.21)
   sass
-  webrick
 
 RUBY VERSION
-   ruby 2.7.2p137
+   ruby 3.1.4p223
 
 BUNDLED WITH
-   2.2.22
+   2.4.22
