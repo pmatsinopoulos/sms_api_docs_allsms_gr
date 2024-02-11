@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 ruby '3.1.4'
 
 gem 'dotenv'
+gem 'solargraph'
 # Middleman
 gem 'middleman', '~> 4.4'
 gem 'middleman-syntax', '~> 3.2'
