@@ -1,0 +1,38 @@
+# Errors
+
+A lot of things might go wrong with your HTTP Requests. <%= config[:app_name] %> API returns
+[Standard HTTP Response Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) to
+indicate the success or failure of the request.
+
+When the HTTP Response code is in the range `400-599`, this means that something has gone wrong.
+
+The following are common error cases. You can see the HTTP Response Status Code and possible
+causes of error:
+
+Status Code | Explanation
+------------|-----------------------------------------------------
+`401`       | You have provided a non-existing or inactive API key
+`422`       | When the data in the request are invalid. For example, for an SMS request, the `fromLabel` does not belong to you.
+`500-599`   | Indicates an error that took place on the server side. <%= config[:app_name] %> developers are automatically notified for such errors and will immediately try to remedy this situation. If your problem persists, use the contact form on <%= config[:app_name] %> Web site to report the problem.
+
+In case you get an error in the range `500-599`, we are suggesting that you retry your
+request. Maybe with an increasing wait in-between the retries. You can retry up to a certain
+amount of times before you give up.
+
+> Structure of JSON Object in Response Body when Error:
+
+```json
+{
+  "result": {
+    "username": "...",
+    "resultCode": "0",
+    "resultDescription": "ERROR: ...",
+    "clientRequestId": "...",
+    "smsServerRequestId": null,
+    "error": "..."
+  }
+}
+```
+
+The body of the HTTP Response body, might give you more information about what was the problem. If it is
+not empty, it will contain a JSON object. Take a look at the `Structure of JSON Object in Response Body when Error`.
