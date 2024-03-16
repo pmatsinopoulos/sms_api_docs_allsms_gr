@@ -26,7 +26,7 @@ You need to study this guide if you want to integrate your application with Web-
 The endpoint that you should be sending your API requests to is:
 
 <aside class="success">
-https://<%= config[:app_domain_name] %>/v1/
+https://<%= config[:api_domain_name] %>/v1/
 </aside>
 
 # Authentication
@@ -160,7 +160,73 @@ With regards to error handling, you can [read the corresponding section bellow](
 
 ## Get Balance in Credits
 
+```shell
+$ curl -v -X POST 'https://sms-api.rayo.gr/v1/balance_in_credits' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'
+```
 
+```ruby
+# This Ruby example uses [Rest Client library](https://github.com/rest-client/rest-client).
+# You can use any other Ruby library that can construct standard HTTPS requests.
+#
+require 'rest-client'
+
+api_key = '5a2a5816-5f32-4234-a9a1-7d59986c06a5'
+
+url = 'https://sms-api.rayo.gr/v1/balance_in_credits'
+headers = {
+  'Accept' => 'application/json',
+  'Authorization' => "Bearer #{api_key}"
+}
+
+response = RestClient.get url, headers
+```
+
+This is the API that will return your current balance in credits. It is a `GET` request to the path
+`/balance_in_credits`
+
+The HTTP Request should have the following headers, as a minimum requirement:
+
+### Request Headers
+
+Name          | Value
+------------- | ---------------------------------
+Accept        | application/json
+Authorization | Bearer [your API key here]
+
+For the `Authorization` header above, replace the `[your API key here]` with your
+own API key. You can find instructions on how to get one [here](#authentication).
+
+### HTTP Response
+
+#### Success
+
+On successful return of the HTTP request, you will get back a standard HTTP response code with value `200`. It will have
+a body that will be a JSON object encoded as string. The JSON object will have the following structure:
+
+Name                        | Type   | Description
+----------------------------|--------|------------
+`request_id                 | string | Unique identifier of your request.
+`balance`                   | object | Object with details about your balance.
+`balance.credits`           | number | The credits remaining in your balance.
+
+Take a look at the `Example Response JSON object`:
+
+> Example Success Response JSON object:
+
+```json
+{
+  "request_id": "7d6939ec-7213-4bf9-9b41-2902b54cfa71",
+  "balance": {
+    "credits": 4240.0
+  }
+}
+```
+
+#### Error
+
+With regards to error handling, you can [read the corresponding section bellow](#errors).
 
 
 

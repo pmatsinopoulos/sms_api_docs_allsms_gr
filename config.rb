@@ -58,6 +58,7 @@ end
 # If you want Middleman to listen on a different port, you can set that below
 set :port, 4567
 
+set :api_domain_name, ENV.fetch('API_DOMAIN_NAME')
 set :app_domain_name, ENV.fetch('APP_DOMAIN_NAME')
 set :app_name, ENV.fetch('APP_NAME')
 set :presentation_site_domain_name, ENV.fetch('PRESENTATION_SITE_DOMAIN_NAME')
