@@ -90,6 +90,20 @@ headers = {
 response = RestClient.post url, payload, headers
 ```
 
+> Example Success Response JSON object:
+
+```json
+{
+  "result": {
+    "username": "user1",
+    "resultCode": "1",
+    "resultDescription": "SUCCESS",
+    "clientRequestId": "932831",
+    "smsServerRequestId": "cc479845-0f15-4ae7-b645-6ef6489868c1"
+  }
+}
+```
+
 Sending an SMS requires you to send a `POST` request to the path `/send_sms`
 
 The HTTP Request should have the following headers, as a minimum requirement:
@@ -137,21 +151,7 @@ Name                        | Type   | Description
 `result.clientRequestId`    | string | It will be either `null` or it will have the value of the `clientRequestId` sent in the incoming SMS request.
 `result.smsServerRequestId` | string | A unique identifier from the SMS server side. This uniquely identifies your SMS request.
 
-Take a look at the `Example Response JSON object`:
-
-> Example Success Response JSON object:
-
-```json
-{
-  "result": {
-    "username": "user1",
-    "resultCode": "1",
-    "resultDescription": "SUCCESS",
-    "clientRequestId": "932831",
-    "smsServerRequestId": "cc479845-0f15-4ae7-b645-6ef6489868c1"
-  }
-}
-```
+Take a look at the `Example Response JSON object`.
 
 #### Error
 
@@ -183,6 +183,18 @@ headers = {
 response = RestClient.get url, headers
 ```
 
+> Example Success Response JSON object:
+
+```json
+{
+  "request_id": "7d6939ec-7213-4bf9-9b41-2902b54cfa71",
+  "balance": {
+    "credits": 4240.0
+  }
+}
+```
+
+
 This is the API that will return your current balance in credits. It is a `GET` request to the path
 `/balance_in_credits`
 
@@ -211,231 +223,202 @@ Name                        | Type   | Description
 `balance`                   | object | Object with details about your balance.
 `balance.credits`           | number | The credits remaining in your balance.
 
-Take a look at the `Example Response JSON object`:
-
-> Example Success Response JSON object:
-
-```json
-{
-  "request_id": "7d6939ec-7213-4bf9-9b41-2902b54cfa71",
-  "balance": {
-    "credits": 4240.0
-  }
-}
-```
+Take a look at the `Example Response JSON object`.
 
 #### Error
 
 With regards to error handling, you can [read the corresponding section bellow](#errors).
 
-
-
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
+## Check Status of Sms Request
 
 ```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here" \
-  -H "Authorization: meowmeowmeow"
+# Get the status of an SMS request by Client Request Id (clientRequestId).
+#
+$ curl -v -X GET 'https://sms-api.rayo.gr/v1/check_status?clientRequestId=<a-client-request-id>'' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'
+
+# Get the status of an SMS request by SMS Server Request Id (smsServerRequestId).
+#
+$ curl -v -X GET 'https://sms-api.rayo.gr/v1/check_status?smsServerRequestId=<an-sms-serveer-request-id>'' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'
 ```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
 
 ```ruby
-require 'kittn'
+# This Ruby example uses [Rest Client library](https://github.com/rest-client/rest-client).
+# You can use any other Ruby library that can construct standard HTTPS requests.
+#
+require 'rest-client'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
+api_key = '5a2a5816-5f32-4234-a9a1-7d59986c06a5'
+
+# Get the status of an SMS request by Client Request Id (clientRequestId).
+#
+url = 'https://sms-api.rayo.gr/v1/check_status?clientRequestId=<a-client-request-id>'
+headers = {
+  'Accept' => 'application/json',
+  'Authorization' => "Bearer #{api_key}"
+}
+
+response = RestClient.get url, headers
+
+# Get the status of an SMS request by SMS Server Request Id (smsServerRequestId).
+#
+url = 'https://sms-api.rayo.gr/v1/check_status?smsServerRequestId=<an-sms-server-request-id>'
+headers = {
+  'Accept' => 'application/json',
+  'Authorization' => "Bearer #{api_key}"
+}
+
+response = RestClient.get url, headers
 ```
 
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens" \
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
-
-> The above command returns JSON structured like this:
+> Example Success Response JSON object:
 
 ```json
 [
   {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
+    "smsServerRequestId": "1396522",
+    "clientRequestId": "20240316203045",
+    "internalSmsOutDeliveryId": "1065597",
+    "mobileNumber": "306972669766",
+    "status": "delivered"
   }
 ]
 ```
 
-This endpoint retrieves all kittens.
+This is the API that will return back the status of an SMS Request. Note that
+an SMS Request might correspond to multiple outgoing SMS messages. This
+API request will return the status of each one of the outgoing message
+that belongs to the specified SMS request.
 
-### HTTP Request
+The SMS Request can be located by one, but not both, of the following:
 
-`GET http://example.com/api/kittens`
+1. `clientRequestId`. This should be the `clientRequestId` that you specified when
+you sent the request.
+2. `smsServerRequestId`. This should be the `smsServerRequestId` that you got back
+in the response of the send request.
 
-### Query Parameters
+The HTTP Request should have the following headers, as a minimum requirement:
 
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+### Request Headers
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
+Name          | Value
+------------- | ---------------------------------
+Accept        | application/json
+Authorization | Bearer [your API key here]
+
+For the `Authorization` header above, replace the `[your API key here]` with your
+own API key. You can find instructions on how to get one [here](#authentication).
+
+#### Success
+
+On successful return of the HTTP request, you will get back a standard HTTP response code with value `200`. It will have
+a body that will be a JSON object encoded as string. The JSON object will have the following structure:
+
+It will be an `Array` of objects of the following structure.
+
+<aside class="notice">
+Note that an SMS Request might correspond to multiple outgoing SMS messages. This
+API request will return the status of each one of the outgoing message
+that belongs to the specified SMS request.
 </aside>
 
-## Get a Specific Kitten
+Name                        | Type   | Description
+----------------------------|--------|------------
+`smsServerRequestId`        | string | The SMS Server Request Id of the original SMS Request
+`clientRequestId`           | string | The Client Request Id that you have assigned to the SMS Request
+`internalSmsOutDeliveryId`  | string | Unique identifier of the outgoing SMS
+`mobileNumber`              | string | The destination mobile number for the specific outgoing SMS
+`status`                    | string | The delivery status of the outgoing SMS. See below the table with possible values
 
-```ruby
-require 'kittn'
+##### SMS Delivery Status
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
+The possible delivery status values are:
 
-```python
-import kittn
+Status             | Explanation
+-------------------|----------------
+new                | Initial Status.
+temp_locked        | Internal Status.
+processing_error   | Failed to Process the Request. Message was not sent out. We will not retry to send it out.
+failure            | We tried to send the message out multiple times, but we failed all of them.
+sent               | The message was sent out.
+error              | There is a temporary error. We will try to send the message again.
+delivered          | Message was delivered to the handset.
+not_delivered      | Message was sent out, but it was not delivered to the handset.
+unknown_delivery   | Message was sent out, but we don't know whether it was delivered or not.
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+An outgoing message that leaves our network is on status `sent`.
+If it is delivered to the handset, it will be on status `delivered`.
+If it cannot be delivered by the mobile network, it will be on
+status `not_delivered`. If we don't get a feedback from the
+device whether the message has been delivered or not after a day,
+it will be turned to `unknown_delivery`.
 
-```shell
-curl "http://example.com/api/kittens/2" \
-  -H "Authorization: meowmeowmeow"
-```
+#### Error
 
-```javascript
-const kittn = require('kittn');
+With regards to error handling, you can [read the corresponding section bellow](#errors).
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
+Note, that if you specify a `clientRequestId` and/or an `smsServerRequestId` that does not match
+any SMS Request in your account, the API request will return HTTP Response Status code `404` and
+the response body will be:
 
-> The above command returns JSON structured like this:
-
-```json
+<aside class="warning">
+<code>
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+  "error": "No record(s) found"
 }
-```
+</code>
+</aside>
 
-This endpoint retrieves a specific kitten.
+## Delivery Updates via a Callback Webhook
 
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+You can set up your own endpoint which <%= config[:app_name] %> API will call every time there is an update
+on the status of an outgoing SMS.
 
-### HTTP Request
+Go to `Actions -> Settings` and locate the section `Callbacks API`. The Callback URL is a service offered by
+<%= config[:app_name] %>. It gives you the ability to receive delivery reports via a specific URL.
+You specify the URL, as well as whether you want the HTTP request to be a `GET` or a `POST` request.
+Also, optionally, you can pick up one of the available HTTP headers (see below) and ask the service to send them
+alongside with their values, values that you can set to anything you see necessary.
 
-`GET http://example.com/kittens/<ID>`
+Whenever we need to update the status of a message, we will be calling your callback endpoint.
 
-### URL Parameters
+### Parameters/Attributes of payload
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+The status of the message will be sent back to your endpoint alongside the following parameters:
 
-## Delete a Specific Kitten
+Parameter Name               | Type   | Description
+-----------------------------|--------|------------------------------------------------------------
+`smsServerRequestId`         | string | This is the unique identifier that matches the initial request to send an SMS. Note that each one request, may be corresponding to more than one SMS sent out. For example, if your request refers to a group with more than one member
+`clientRequestId`            | string | This is the identifier that you have provided when you sent your initial request. Since this parameter is optional on requests, then it may not be present on the delivery reports.
+`internalSmsOutDeliveryId`   | string | This is unique identifier for each SMS sent out. It is internally generated.
+`senderId`                   | string | This is the Sender Identifier that has been used to send the SMS out.
+`mobileNumber`               | string | This is the mobile number that the SMS has been sent out to.
+`status`                     | string | This is the delivery status of the outgoing SMS. Read about the possible valus above.
+`errorDescription`           | string | Usually it contains `no error`` but it may contain an error description if the status implies an error.
+`requestTimestamp`           | string | The timestamp, in iso8601 standard, the SMS request was received by our systems.
+`lastStatusUpdatedTimestamp` | string | The timestamp of the last status update.
 
-```ruby
-require 'kittn'
+Note that if you specify the HTTP Verb to be `POST` then the parameters will be delivered to you
+in the body of the request encoded as a JSON object. If you, instead, prefer the HTTP Verb to be
+`GET` then the parameters alongside their values are being URL-encoded.
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
+### Available HTTP Request Headers
 
-```python
-import kittn
+You can specify the following HTTP Request Headers to be sent over to your callback endpoint:
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
+Name                  |
+----------------------|
+`Authorization`       |
+`From`                |
+`Pragma`              |
+`Proxy authorization` |
 
-```shell
-curl "http://example.com/api/kittens/2" \
-  -X DELETE \
-  -H "Authorization: meowmeowmeow"
-```
+## More API Endpoints on the Way
 
-```javascript
-const kittn = require('kittn');
+We are in the process of developing more API endpoints that will allow you to
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
-
-This endpoint deletes a specific kitten.
-
-### HTTP Request
-
-`DELETE http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+* Manage Contacts, and
+* Manage groups
