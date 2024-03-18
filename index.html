@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <meta
             name="description"
-            content="Documentation for the Kittn API"
+            content="Documentation for the <%= config[:app_name] %> API"
         >
-    <title>API Reference</title>
+    <title>API Documentation - Rayo SMS</title>
 
     <style media="screen">
       .highlight table td { padding: 5px; }
@@ -295,7 +295,7 @@
     </script>
   </head>
 
-  <body class="index" data-languages="[&quot;shell&quot;,&quot;ruby&quot;,&quot;python&quot;,&quot;javascript&quot;]">
+  <body class="index" data-languages="[&quot;shell&quot;,&quot;ruby&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -303,12 +303,10 @@
       </span>
     </a>
     <div class="toc-wrapper">
-      <img src="images/logo-1e815a84.png" class="logo" alt="" />
+      <img src="images/rayo-4e3183ee.png" class="logo" alt="" />
         <div class="lang-selector">
               <a href="#" data-language-name="shell">shell</a>
               <a href="#" data-language-name="ruby">ruby</a>
-              <a href="#" data-language-name="python">python</a>
-              <a href="#" data-language-name="javascript">javascript</a>
         </div>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
@@ -319,19 +317,28 @@
             <a href="#introduction" class="toc-h1 toc-link" data-title="Introduction">Introduction</a>
           </li>
           <li>
+            <a href="#base-endpoint" class="toc-h1 toc-link" data-title="Base Endpoint">Base Endpoint</a>
+          </li>
+          <li>
             <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
           </li>
           <li>
-            <a href="#kittens" class="toc-h1 toc-link" data-title="Kittens">Kittens</a>
+            <a href="#api-reference" class="toc-h1 toc-link" data-title="API Reference">API Reference</a>
               <ul class="toc-list-h2">
                   <li>
-                    <a href="#get-all-kittens" class="toc-h2 toc-link" data-title="Get All Kittens">Get All Kittens</a>
+                    <a href="#sending-an-sms" class="toc-h2 toc-link" data-title="Sending an SMS">Sending an SMS</a>
                   </li>
                   <li>
-                    <a href="#get-a-specific-kitten" class="toc-h2 toc-link" data-title="Get a Specific Kitten">Get a Specific Kitten</a>
+                    <a href="#get-balance-in-credits" class="toc-h2 toc-link" data-title="Get Balance in Credits">Get Balance in Credits</a>
                   </li>
                   <li>
-                    <a href="#delete-a-specific-kitten" class="toc-h2 toc-link" data-title="Delete a Specific Kitten">Delete a Specific Kitten</a>
+                    <a href="#check-status-of-sms-request" class="toc-h2 toc-link" data-title="Check Status of Sms Request">Check Status of Sms Request</a>
+                  </li>
+                  <li>
+                    <a href="#delivery-updates-via-a-callback-webhook" class="toc-h2 toc-link" data-title="Delivery Updates via a Callback Webhook">Delivery Updates via a Callback Webhook</a>
+                  </li>
+                  <li>
+                    <a href="#more-api-endpoints-on-the-way" class="toc-h2 toc-link" data-title="More API Endpoints on the Way">More API Endpoints on the Way</a>
                   </li>
               </ul>
           </li>
@@ -339,259 +346,645 @@
             <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
           </li>
       </ul>
-        <ul class="toc-footer">
-            <li><a href='#'>Sign Up for a Developer Key</a></li>
-            <li><a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a></li>
-        </ul>
     </div>
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
         <h1 id='introduction'>Introduction</h1>
-<p>Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.</p>
+<p>Welcome to the <a href="https://www.rayo.gr">Rayo SMS</a> API documentation.</p>
 
-<p>We have language bindings in Shell, Ruby, Python, and JavaScript! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
+<p>You need to study this guide if you want to integrate your application with Web-to-SMS Functionality via <a href="https://www.rayo.gr">Rayo SMS</a>.</p>
+<h1 id='base-endpoint'>Base Endpoint</h1>
+<p>The endpoint that you should be sending your API requests to is:</p>
 
-<p>This example API documentation page was created with <a href="https://github.com/slatedocs/slate">Slate</a>. Feel free to edit it and use it as a base for your own API&#39;s documentation.</p>
-<h1 id='authentication'>Authentication</h1>
-<blockquote>
-<p>To authorize, use this code:</p>
-</blockquote>
-<div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">kittn</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="p">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"api_endpoint_here"</span> <span class="se">\</span>
-  <span class="nt">-H</span> <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">kittn</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">kittn</span><span class="dl">'</span><span class="p">);</span>
-
-<span class="kd">let</span> <span class="nx">api</span> <span class="o">=</span> <span class="nx">kittn</span><span class="p">.</span><span class="nx">authorize</span><span class="p">(</span><span class="dl">'</span><span class="s1">meowmeowmeow</span><span class="dl">'</span><span class="p">);</span>
-</code></pre></div>
-<blockquote>
-<p>Make sure to replace <code>meowmeowmeow</code> with your API key.</p>
-</blockquote>
-
-<p>Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our <a href="http://example.com/developers">developer portal</a>.</p>
-
-<p>Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:</p>
-
-<p><code>Authorization: meowmeowmeow</code></p>
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+<aside class="success">
+https://sms-api.rayo.gr/v1/
 </aside>
-<h1 id='kittens'>Kittens</h1><h2 id='get-all-kittens'>Get All Kittens</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
+<h1 id='authentication'>Authentication</h1>
+<p>The endpoint, although public, it requires that you send your own, private, API Key as part of the HTTP <code>Authorization</code> header.</p>
 
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span>
-</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">kittn</span>
+<p>You can get and manage your API keys from the <code>Actions -&gt; Settings</code> page inside the Rayo SMS Web application.</p>
 
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="p">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="n">kittens</span><span class="p">.</span><span class="n">get</span><span class="p">()</span>
-</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://example.com/api/kittens"</span> <span class="se">\</span>
-  <span class="nt">-H</span> <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">kittn</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">kittn</span><span class="dl">'</span><span class="p">);</span>
+<p>Note that you can have many API keys active at the same time. This will be useful when you decide to decommission an old API key
+and replace it with a new one. You might want to keep both active at the same time for a short period of time until all of your
+systems that integrate with Rayo SMS finally use the new API key. Or you can use two different API keys for
+different purposes. It&#39;s up to you.</p>
 
-<span class="kd">let</span> <span class="nx">api</span> <span class="o">=</span> <span class="nx">kittn</span><span class="p">.</span><span class="nx">authorize</span><span class="p">(</span><span class="dl">'</span><span class="s1">meowmeowmeow</span><span class="dl">'</span><span class="p">);</span>
-<span class="kd">let</span> <span class="nx">kittens</span> <span class="o">=</span> <span class="nx">api</span><span class="p">.</span><span class="nx">kittens</span><span class="p">.</span><span class="kd">get</span><span class="p">();</span>
+<p>In the following paragraphs, where we describe the differen API features, we will give examples on how you would pass the Authorization
+as part of the HTTP Request Headers, but until then, here is an example of a valid header:</p>
+
+<p><code>Authorization: Bearer 1212845e-3517-436f-8f31-86cfb51f6251</code></p>
+
+<p>Where <code>1212845e-3517-436f-8f31-86cfb51f6251</code>, is valid API key. Replace this, with your own API key.</p>
+
+<p><strong>Important</strong>: Treat the API keys as confidential as you keep your passwords. Do not store them in version control systems and do not reveal to
+public. Always use end-to-end encryption (<code>HTTPS</code>) between the client application and the Rayo SMS endpoints when using the API.</p>
+<h1 id='api-reference'>API Reference</h1><h2 id='sending-an-sms'>Sending an SMS</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="nv">$ </span>curl <span class="nt">-v</span> <span class="nt">-X</span> POST <span class="s1">'https://sms-api.rayo.gr/v1/send_sms'</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Accept: application/json'</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{
+    "toMobileNumber":"6972669766",
+    "fromLabel":"306972669766",
+    "smsBody":"test message"
+  }'</span>
+</code></pre></div><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="c1"># This Ruby example uses [Rest Client library](https://github.com/rest-client/rest-client).</span>
+<span class="c1"># You can use any other Ruby library that can construct standard HTTPS requests.</span>
+<span class="c1">#</span>
+<span class="nb">require</span> <span class="s1">'rest-client'</span>
+
+<span class="n">api_key</span> <span class="o">=</span> <span class="s1">'5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span>
+<span class="n">sms_body</span> <span class="o">=</span> <span class="s1">'test message'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.rayo.gr/v1/send_sms'</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="ss">toMobileNumber: </span><span class="s1">'6972669766'</span><span class="p">,</span>
+  <span class="ss">fromLabel: </span><span class="s1">'306972669766'</span><span class="p">,</span>
+  <span class="ss">smsBody: </span><span class="n">sms_body</span>
+<span class="p">}.</span><span class="nf">to_json</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span>
+  <span class="s1">'Accept'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span>
+  <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">"</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">post</span> <span class="n">url</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">headers</span>
 </code></pre></div>
 <blockquote>
-<p>The above command returns JSON structured like this:</p>
+<p>Example Success Response JSON object:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"result"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"username"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user1"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"resultCode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"resultDescription"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SUCCESS"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"clientRequestId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"932831"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"smsServerRequestId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cc479845-0f15-4ae7-b645-6ef6489868c1"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>Sending an SMS requires you to send a <code>POST</code> request to the path <code>/send_sms</code></p>
+
+<p>The HTTP Request should have the following headers, as a minimum requirement:</p>
+<h3 id='request-headers'>Request Headers</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Content-Type</td>
+<td>application/json</td>
+</tr>
+<tr>
+<td>Accept</td>
+<td>application/json</td>
+</tr>
+<tr>
+<td>Authorization</td>
+<td>Bearer [your API key here]</td>
+</tr>
+</tbody></table>
+
+<p>For the <code>Authorization</code> header above, replace the <code>[your API key here]</code> with your
+own API key. You can find instructions on how to get one <a href="#authentication">here</a>.</p>
+
+<p>The payload of the request should be sent in the body of the request as a string.
+The string should be a string encoding of a JSON object. The JSON object should
+have the following properties:</p>
+<h3 id='json-object-properties'>JSON Object Properties</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>toMobileNumber</code></td>
+<td>string</td>
+<td>The mobile number this sms will be sent to. It can be a comma-separated, semi-colon separated list of mobile numbers.</td>
+<td><code>306972669766</code> or <code>306972669766;306972669764</code></td>
+</tr>
+<tr>
+<td><code>toGroup</code></td>
+<td>string</td>
+<td>The name of the Group this sms will be sent to. Group is one of your groups regisered in the application.</td>
+<td><code>High Valued Customers</code></td>
+</tr>
+<tr>
+<td><code>fromLabel</code></td>
+<td>string</td>
+<td>The sender identifier. One of the sender ids that you have registered in the application.</td>
+<td><code>BOXNOW</code></td>
+</tr>
+<tr>
+<td><code>smsBody</code></td>
+<td>string</td>
+<td>The SMS content.</td>
+<td><code>Hello! You have just won 5 Euro Gift Card!</code></td>
+</tr>
+<tr>
+<td><code>clientRequestId</code></td>
+<td>string</td>
+<td>The client request id that will be attached to the sms request. This is optional. It can be used for search/reporting. It&#39;s a business-level value that makes sense to your own business. The application does not process it at all, other than for indexing the message.</td>
+<td><code>9543212</code></td>
+</tr>
+<tr>
+<td><code>callbackWhenProcessedFlag</code></td>
+<td>boolean</td>
+<td>Default <code>false</code><code>. When</code>true``, SMS server will call the callback api endpoint to report back the status of delivery. You must have set up a callback api in the application settings.</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>simulateSendFlag</code></td>
+<td>boolean</td>
+<td>Default <code>false</code>. When <code>true</code>, the SMS will not actually be delivered. This can be used to test the integration without consuming credits.</td>
+<td><code>false</code></td>
+</tr>
+</tbody></table>
+<h3 id='http-response'>HTTP Response</h3><h4 id='success'>Success</h4>
+<p>On successful sending of the HTTP request, you will get back a standard HTTP response code with value <code>200</code>. It will have
+a body that will be a JSON object encoded as string. The JSON object will have the following structure:</p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>result</code></td>
+<td>object</td>
+<td>JSON root level object. All the other properties, below, they are properties of this object.</td>
+</tr>
+<tr>
+<td><code>result.username</code></td>
+<td>string</td>
+<td>The username identified by the API key used in the incoming SMS request.</td>
+</tr>
+<tr>
+<td><code>result.resultCode</code></td>
+<td>string</td>
+<td>It will have the value &quot;1&quot; on success. Different from &quot;1&quot; on failure.</td>
+</tr>
+<tr>
+<td><code>result.resultDescription</code></td>
+<td>string</td>
+<td>It will have the value &quot;SUCCESS&quot; on success. Different from &quot;SUCCESS&quot; on failure.</td>
+</tr>
+<tr>
+<td><code>result.clientRequestId</code></td>
+<td>string</td>
+<td>It will be either <code>null</code> or it will have the value of the <code>clientRequestId</code> sent in the incoming SMS request.</td>
+</tr>
+<tr>
+<td><code>result.smsServerRequestId</code></td>
+<td>string</td>
+<td>A unique identifier from the SMS server side. This uniquely identifies your SMS request.</td>
+</tr>
+</tbody></table>
+
+<p>Take a look at the <code>Example Response JSON object</code>.</p>
+<h4 id='error'>Error</h4>
+<p>With regards to error handling, you can <a href="#errors">read the corresponding section bellow</a>.</p>
+<h2 id='get-balance-in-credits'>Get Balance in Credits</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="nv">$ </span>curl <span class="nt">-v</span> <span class="nt">-X</span> POST <span class="s1">'https://sms-api.rayo.gr/v1/balance_in_credits'</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Accept: application/json'</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span>
+</code></pre></div><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="c1"># This Ruby example uses [Rest Client library](https://github.com/rest-client/rest-client).</span>
+<span class="c1"># You can use any other Ruby library that can construct standard HTTPS requests.</span>
+<span class="c1">#</span>
+<span class="nb">require</span> <span class="s1">'rest-client'</span>
+
+<span class="n">api_key</span> <span class="o">=</span> <span class="s1">'5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.rayo.gr/v1/balance_in_credits'</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'Accept'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span>
+  <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">"</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span>
+</code></pre></div>
+<blockquote>
+<p>Example Success Response JSON object:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"request_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7d6939ec-7213-4bf9-9b41-2902b54cfa71"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"balance"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"credits"</span><span class="p">:</span><span class="w"> </span><span class="mf">4240.0</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This is the API that will return your current balance in credits. It is a <code>GET</code> request to the path
+<code>/balance_in_credits</code></p>
+
+<p>The HTTP Request should have the following headers, as a minimum requirement:</p>
+<h3 id='request-headers-2'>Request Headers</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Accept</td>
+<td>application/json</td>
+</tr>
+<tr>
+<td>Authorization</td>
+<td>Bearer [your API key here]</td>
+</tr>
+</tbody></table>
+
+<p>For the <code>Authorization</code> header above, replace the <code>[your API key here]</code> with your
+own API key. You can find instructions on how to get one <a href="#authentication">here</a>.</p>
+<h3 id='http-response-2'>HTTP Response</h3><h4 id='success-2'>Success</h4>
+<p>On successful return of the HTTP request, you will get back a standard HTTP response code with value <code>200</code>. It will have
+a body that will be a JSON object encoded as string. The JSON object will have the following structure:</p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>`request_id</td>
+<td>string</td>
+<td>Unique identifier of your request.</td>
+</tr>
+<tr>
+<td><code>balance</code></td>
+<td>object</td>
+<td>Object with details about your balance.</td>
+</tr>
+<tr>
+<td><code>balance.credits</code></td>
+<td>number</td>
+<td>The credits remaining in your balance.</td>
+</tr>
+</tbody></table>
+
+<p>Take a look at the <code>Example Response JSON object</code>.</p>
+<h4 id='error-2'>Error</h4>
+<p>With regards to error handling, you can <a href="#errors">read the corresponding section bellow</a>.</p>
+<h2 id='check-status-of-sms-request'>Check Status of Sms Request</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Get the status of an SMS request by Client Request Id (clientRequestId).</span>
+<span class="c">#</span>
+<span class="nv">$ </span>curl <span class="nt">-v</span> <span class="nt">-X</span> GET <span class="s1">'https://sms-api.rayo.gr/v1/check_status?clientRequestId=&lt;a-client-request-id&gt;'' \
+  -H '</span>Accept: application/json<span class="s1">' \
+  -H '</span>Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5<span class="s1">'
+
+# Get the status of an SMS request by SMS Server Request Id (smsServerRequestId).
+#
+$ curl -v -X GET '</span>https://sms-api.rayo.gr/v1/check_status?smsServerRequestId<span class="o">=</span>&lt;an-sms-serveer-request-id&gt;<span class="s1">''</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Accept: application/json'</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span>
+</code></pre></div><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="c1"># This Ruby example uses [Rest Client library](https://github.com/rest-client/rest-client).</span>
+<span class="c1"># You can use any other Ruby library that can construct standard HTTPS requests.</span>
+<span class="c1">#</span>
+<span class="nb">require</span> <span class="s1">'rest-client'</span>
+
+<span class="n">api_key</span> <span class="o">=</span> <span class="s1">'5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span>
+
+<span class="c1"># Get the status of an SMS request by Client Request Id (clientRequestId).</span>
+<span class="c1">#</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.rayo.gr/v1/check_status?clientRequestId=&lt;a-client-request-id&gt;'</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'Accept'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span>
+  <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">"</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span>
+
+<span class="c1"># Get the status of an SMS request by SMS Server Request Id (smsServerRequestId).</span>
+<span class="c1">#</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.rayo.gr/v1/check_status?smsServerRequestId=&lt;an-sms-server-request-id&gt;'</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'Accept'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span>
+  <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">"</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">get</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span>
+</code></pre></div>
+<blockquote>
+<p>Example Success Response JSON object:</p>
 </blockquote>
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
   </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Fluffums"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"calico"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Max"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+    </span><span class="nl">"smsServerRequestId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1396522"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"clientRequestId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"20240316203045"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"internalSmsOutDeliveryId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1065597"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"mobileNumber"</span><span class="p">:</span><span class="w"> </span><span class="s2">"306972669766"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"delivered"</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div>
-<p>This endpoint retrieves all kittens.</p>
-<h3 id='http-request'>HTTP Request</h3>
-<p><code>GET http://example.com/api/kittens</code></p>
-<h3 id='query-parameters'>Query Parameters</h3>
+<p>This is the API that will return back the status of an SMS Request. Note that
+an SMS Request might correspond to multiple outgoing SMS messages. This
+API request will return the status of each one of the outgoing message
+that belongs to the specified SMS request.</p>
+
+<p>The SMS Request can be located by one, but not both, of the following:</p>
+
+<ol>
+<li><code>clientRequestId</code>. This should be the <code>clientRequestId</code> that you specified when
+you sent the request.</li>
+<li><code>smsServerRequestId</code>. This should be the <code>smsServerRequestId</code> that you got back
+in the response of the send request.</li>
+</ol>
+
+<p>The HTTP Request should have the following headers, as a minimum requirement:</p>
+<h3 id='request-headers-3'>Request Headers</h3>
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
+<th>Name</th>
+<th>Value</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>include_cats</td>
-<td>false</td>
-<td>If set to true, the result will also include cats.</td>
+<td>Accept</td>
+<td>application/json</td>
 </tr>
 <tr>
-<td>available</td>
-<td>true</td>
-<td>If set to false, the result will include kittens that have already been adopted.</td>
+<td>Authorization</td>
+<td>Bearer [your API key here]</td>
 </tr>
 </tbody></table>
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-<h2 id='get-a-specific-kitten'>Get a Specific Kitten</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
+<p>For the <code>Authorization</code> header above, replace the <code>[your API key here]</code> with your
+own API key. You can find instructions on how to get one <a href="#authentication">here</a>.</p>
+<h4 id='success-3'>Success</h4>
+<p>On successful return of the HTTP request, you will get back a standard HTTP response code with value <code>200</code>. It will have
+a body that will be a JSON object encoded as string. The JSON object will have the following structure:</p>
 
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">kittn</span>
+<p>It will be an <code>Array</code> of objects of the following structure.</p>
 
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="p">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="n">kittens</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://example.com/api/kittens/2"</span> <span class="se">\</span>
-  <span class="nt">-H</span> <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">kittn</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">kittn</span><span class="dl">'</span><span class="p">);</span>
-
-<span class="kd">let</span> <span class="nx">api</span> <span class="o">=</span> <span class="nx">kittn</span><span class="p">.</span><span class="nx">authorize</span><span class="p">(</span><span class="dl">'</span><span class="s1">meowmeowmeow</span><span class="dl">'</span><span class="p">);</span>
-<span class="kd">let</span> <span class="nx">max</span> <span class="o">=</span> <span class="nx">api</span><span class="p">.</span><span class="nx">kittens</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-</code></pre></div>
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Max"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre></div>
-<p>This endpoint retrieves a specific kitten.</p>
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-<h3 id='http-request-2'>HTTP Request</h3>
-<p><code>GET http://example.com/kittens/&lt;ID&gt;</code></p>
-<h3 id='url-parameters'>URL Parameters</h3>
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>ID</td>
-<td>The ID of the kitten to retrieve</td>
-</tr>
-</tbody></table>
-<h2 id='delete-a-specific-kitten'>Delete a Specific Kitten</h2><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">kittn</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="p">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="n">kittens</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre></div><div class="highlight"><pre class="highlight shell tab-shell"><code>curl <span class="s2">"http://example.com/api/kittens/2"</span> <span class="se">\</span>
-  <span class="nt">-X</span> DELETE <span class="se">\</span>
-  <span class="nt">-H</span> <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre></div><div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">kittn</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">kittn</span><span class="dl">'</span><span class="p">);</span>
-
-<span class="kd">let</span> <span class="nx">api</span> <span class="o">=</span> <span class="nx">kittn</span><span class="p">.</span><span class="nx">authorize</span><span class="p">(</span><span class="dl">'</span><span class="s1">meowmeowmeow</span><span class="dl">'</span><span class="p">);</span>
-<span class="kd">let</span> <span class="nx">max</span> <span class="o">=</span> <span class="nx">api</span><span class="p">.</span><span class="nx">kittens</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-</code></pre></div>
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"deleted"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">":("</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre></div>
-<p>This endpoint deletes a specific kitten.</p>
-<h3 id='http-request-3'>HTTP Request</h3>
-<p><code>DELETE http://example.com/kittens/&lt;ID&gt;</code></p>
-<h3 id='url-parameters-2'>URL Parameters</h3>
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>ID</td>
-<td>The ID of the kitten to delete</td>
-</tr>
-</tbody></table>
-<h1 id='errors'>Errors</h1>
 <aside class="notice">
-This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
+Note that an SMS Request might correspond to multiple outgoing SMS messages. This
+API request will return the status of each one of the outgoing message
+that belongs to the specified SMS request.
 </aside>
-
-<p>The Kittn API uses the following error codes:</p>
 
 <table><thead>
 <tr>
-<th>Error Code</th>
-<th>Meaning</th>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>400</td>
-<td>Bad Request -- Your request is invalid.</td>
+<td><code>smsServerRequestId</code></td>
+<td>string</td>
+<td>The SMS Server Request Id of the original SMS Request</td>
 </tr>
 <tr>
-<td>401</td>
-<td>Unauthorized -- Your API key is wrong.</td>
+<td><code>clientRequestId</code></td>
+<td>string</td>
+<td>The Client Request Id that you have assigned to the SMS Request</td>
 </tr>
 <tr>
-<td>403</td>
-<td>Forbidden -- The kitten requested is hidden for administrators only.</td>
+<td><code>internalSmsOutDeliveryId</code></td>
+<td>string</td>
+<td>Unique identifier of the outgoing SMS</td>
 </tr>
 <tr>
-<td>404</td>
-<td>Not Found -- The specified kitten could not be found.</td>
+<td><code>mobileNumber</code></td>
+<td>string</td>
+<td>The destination mobile number for the specific outgoing SMS</td>
 </tr>
 <tr>
-<td>405</td>
-<td>Method Not Allowed -- You tried to access a kitten with an invalid method.</td>
-</tr>
-<tr>
-<td>406</td>
-<td>Not Acceptable -- You requested a format that isn&#39;t json.</td>
-</tr>
-<tr>
-<td>410</td>
-<td>Gone -- The kitten requested has been removed from our servers.</td>
-</tr>
-<tr>
-<td>418</td>
-<td>I&#39;m a teapot.</td>
-</tr>
-<tr>
-<td>429</td>
-<td>Too Many Requests -- You&#39;re requesting too many kittens! Slow down!</td>
-</tr>
-<tr>
-<td>500</td>
-<td>Internal Server Error -- We had a problem with our server. Try again later.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Service Unavailable -- We&#39;re temporarily offline for maintenance. Please try again later.</td>
+<td><code>status</code></td>
+<td>string</td>
+<td>The delivery status of the outgoing SMS. See below the table with possible values</td>
 </tr>
 </tbody></table>
+<h5 id='sms-delivery-status'>SMS Delivery Status</h5>
+<p>The possible delivery status values are:</p>
+
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Explanation</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>new</td>
+<td>Initial Status.</td>
+</tr>
+<tr>
+<td>temp_locked</td>
+<td>Internal Status.</td>
+</tr>
+<tr>
+<td>processing_error</td>
+<td>Failed to Process the Request. Message was not sent out. We will not retry to send it out.</td>
+</tr>
+<tr>
+<td>failure</td>
+<td>We tried to send the message out multiple times, but we failed all of them.</td>
+</tr>
+<tr>
+<td>sent</td>
+<td>The message was sent out.</td>
+</tr>
+<tr>
+<td>error</td>
+<td>There is a temporary error. We will try to send the message again.</td>
+</tr>
+<tr>
+<td>delivered</td>
+<td>Message was delivered to the handset.</td>
+</tr>
+<tr>
+<td>not_delivered</td>
+<td>Message was sent out, but it was not delivered to the handset.</td>
+</tr>
+<tr>
+<td>unknown_delivery</td>
+<td>Message was sent out, but we don&#39;t know whether it was delivered or not.</td>
+</tr>
+</tbody></table>
+
+<p>An outgoing message that leaves our network is on status <code>sent</code>.
+If it is delivered to the handset, it will be on status <code>delivered</code>.
+If it cannot be delivered by the mobile network, it will be on
+status <code>not_delivered</code>. If we don&#39;t get a feedback from the
+device whether the message has been delivered or not after a day,
+it will be turned to <code>unknown_delivery</code>.</p>
+<h4 id='error-3'>Error</h4>
+<p>With regards to error handling, you can <a href="#errors">read the corresponding section bellow</a>.</p>
+
+<p>Note, that if you specify a <code>clientRequestId</code> and/or an <code>smsServerRequestId</code> that does not match
+any SMS Request in your account, the API request will return HTTP Response Status code <code>404</code> and
+the response body will be:</p>
+
+<aside class="warning">
+<code>
+{
+  "error": "No record(s) found"
+}
+</code>
+</aside>
+<h2 id='delivery-updates-via-a-callback-webhook'>Delivery Updates via a Callback Webhook</h2>
+<p>You can set up your own endpoint which Rayo SMS API will call every time there is an update
+on the status of an outgoing SMS.</p>
+
+<p>Go to <code>Actions -&gt; Settings</code> and locate the section <code>Callbacks API</code>. The Callback URL is a service offered by
+Rayo SMS. It gives you the ability to receive delivery reports via a specific URL.
+You specify the URL, as well as whether you want the HTTP request to be a <code>GET</code> or a <code>POST</code> request.
+Also, optionally, you can pick up one of the available HTTP headers (see below) and ask the service to send them
+alongside with their values, values that you can set to anything you see necessary.</p>
+
+<p>Whenever we need to update the status of a message, we will be calling your callback endpoint.</p>
+<h3 id='parameters-attributes-of-payload'>Parameters/Attributes of payload</h3>
+<p>The status of the message will be sent back to your endpoint alongside the following parameters:</p>
+
+<table><thead>
+<tr>
+<th>Parameter Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>smsServerRequestId</code></td>
+<td>string</td>
+<td>This is the unique identifier that matches the initial request to send an SMS. Note that each one request, may be corresponding to more than one SMS sent out. For example, if your request refers to a group with more than one member</td>
+</tr>
+<tr>
+<td><code>clientRequestId</code></td>
+<td>string</td>
+<td>This is the identifier that you have provided when you sent your initial request. Since this parameter is optional on requests, then it may not be present on the delivery reports.</td>
+</tr>
+<tr>
+<td><code>internalSmsOutDeliveryId</code></td>
+<td>string</td>
+<td>This is unique identifier for each SMS sent out. It is internally generated.</td>
+</tr>
+<tr>
+<td><code>senderId</code></td>
+<td>string</td>
+<td>This is the Sender Identifier that has been used to send the SMS out.</td>
+</tr>
+<tr>
+<td><code>mobileNumber</code></td>
+<td>string</td>
+<td>This is the mobile number that the SMS has been sent out to.</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>string</td>
+<td>This is the delivery status of the outgoing SMS. Read about the possible valus above.</td>
+</tr>
+<tr>
+<td><code>errorDescription</code></td>
+<td>string</td>
+<td>Usually it contains <code>no error</code>` but it may contain an error description if the status implies an error.</td>
+</tr>
+<tr>
+<td><code>requestTimestamp</code></td>
+<td>string</td>
+<td>The timestamp, in iso8601 standard, the SMS request was received by our systems.</td>
+</tr>
+<tr>
+<td><code>lastStatusUpdatedTimestamp</code></td>
+<td>string</td>
+<td>The timestamp of the last status update.</td>
+</tr>
+</tbody></table>
+
+<p>Note that if you specify the HTTP Verb to be <code>POST</code> then the parameters will be delivered to you
+in the body of the request encoded as a JSON object. If you, instead, prefer the HTTP Verb to be
+<code>GET</code> then the parameters alongside their values are being URL-encoded.</p>
+<h3 id='available-http-request-headers'>Available HTTP Request Headers</h3>
+<p>You can specify the following HTTP Request Headers to be sent over to your callback endpoint:</p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>Authorization</code></td>
+</tr>
+<tr>
+<td><code>From</code></td>
+</tr>
+<tr>
+<td><code>Pragma</code></td>
+</tr>
+<tr>
+<td><code>Proxy authorization</code></td>
+</tr>
+</tbody></table>
+<h2 id='more-api-endpoints-on-the-way'>More API Endpoints on the Way</h2>
+<p>We are in the process of developing more API endpoints that will allow you to</p>
+
+<ul>
+<li>Manage Contacts, and</li>
+<li>Manage groups</li>
+</ul>
+<h1 id='errors'>Errors</h1>
+<p>A lot of things might go wrong with your HTTP Requests. Rayo SMS API returns
+<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status">Standard HTTP Response Status Codes</a> to
+indicate the success or failure of the request.</p>
+
+<p>When the HTTP Response code is in the range <code>400-599</code>, this means that something has gone wrong.</p>
+
+<p>The following are common error cases. You can see the HTTP Response Status Code and possible
+causes of error:</p>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Explanation</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>401</code></td>
+<td>You have provided a non-existing or inactive API key</td>
+</tr>
+<tr>
+<td><code>422</code></td>
+<td>When the data in the request are invalid. For example, for an SMS request, the <code>fromLabel</code> does not belong to you.</td>
+</tr>
+<tr>
+<td><code>500-599</code></td>
+<td>Indicates an error that took place on the server side. Rayo SMS developers are automatically notified for such errors and will immediately try to remedy this situation. If your problem persists, use the contact form on Rayo SMS Web site to report the problem.</td>
+</tr>
+</tbody></table>
+
+<p>In case you get an error in the range <code>500-599</code>, we are suggesting that you retry your
+request. Maybe with an increasing wait time in-between the retries. You can retry up to a certain
+amount of times before you give up.</p>
+
+<blockquote>
+<p>Structure of JSON Object in Response Body when Error:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"result"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"username"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"resultCode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"resultDescription"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ERROR: ..."</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"clientRequestId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"smsServerRequestId"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>The body of the HTTP Response body, might give you more information about what was the problem. If it is
+not empty, it will contain a JSON object. Take a look at the <code>Structure of JSON Object in Response Body when Error</code>.</p>
 
       </div>
       <div class="dark-box">
           <div class="lang-selector">
                 <a href="#" data-language-name="shell">shell</a>
                 <a href="#" data-language-name="ruby">ruby</a>
-                <a href="#" data-language-name="python">python</a>
-                <a href="#" data-language-name="javascript">javascript</a>
           </div>
       </div>
     </div>
