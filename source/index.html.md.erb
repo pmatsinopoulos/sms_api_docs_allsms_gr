@@ -371,3 +371,54 @@ the response body will be:
 }
 </code>
 </aside>
+
+## Delivery Updates via a Callback Webhook
+
+You can set up your own endpoint which <%= config[:app_name] %> API will call every time there is an update
+on the status of an outgoing SMS.
+
+Go to `Actions -> Settings` and locate the section `Callbacks API`. The Callback URL is a service offered by
+<%= config[:app_name] %>. It gives you the ability to receive delivery reports via a specific URL.
+You specify the URL, as well as whether you want the HTTP request to be a `GET` or a `POST` request.
+Also, optionally, you can pick up one of the available HTTP headers (see below) and ask the service to send them
+alongside with their values, values that you can set to anything you see necessary.
+
+Whenever we need to update the status of a message, we will be calling your callback endpoint.
+
+### Parameters/Attributes of payload
+
+The status of the message will be sent back to your endpoint alongside the following parameters:
+
+Parameter Name               | Type   | Description
+-----------------------------|--------|------------------------------------------------------------
+`smsServerRequestId`         | string | This is the unique identifier that matches the initial request to send an SMS. Note that each one request, may be corresponding to more than one SMS sent out. For example, if your request refers to a group with more than one member
+`clientRequestId`            | string | This is the identifier that you have provided when you sent your initial request. Since this parameter is optional on requests, then it may not be present on the delivery reports.
+`internalSmsOutDeliveryId`   | string | This is unique identifier for each SMS sent out. It is internally generated.
+`senderId`                   | string | This is the Sender Identifier that has been used to send the SMS out.
+`mobileNumber`               | string | This is the mobile number that the SMS has been sent out to.
+`status`                     | string | This is the delivery status of the outgoing SMS. Read about the possible valus above.
+`errorDescription`           | string | Usually it contains `no error`` but it may contain an error description if the status implies an error.
+`requestTimestamp`           | string | The timestamp, in iso8601 standard, the SMS request was received by our systems.
+`lastStatusUpdatedTimestamp` | string | The timestamp of the last status update.
+
+Note that if you specify the HTTP Verb to be `POST` then the parameters will be delivered to you
+in the body of the request encoded as a JSON object. If you, instead, prefer the HTTP Verb to be
+`GET` then the parameters alongside their values are being URL-encoded.
+
+### Available HTTP Request Headers
+
+You can specify the following HTTP Request Headers to be sent over to your callback endpoint:
+
+Name                  |
+----------------------|
+`Authorization`       |
+`From`                |
+`Pragma`              |
+`Proxy authorization` |
+
+## More API Endpoints on the Way
+
+We are in the process of developing more API endpoints that will allow you to
+
+* Manage Contacts, and
+* Manage groups
