@@ -40,7 +40,7 @@ and replace it with a new one. You might want to keep both active at the same ti
 systems that integrate with <%= config[:app_name] %> finally use the new API key. Or you can use two different API keys for
 different purposes. It's up to you.
 
-In the following paragraphs, where we describe the differen API features, we will give examples on how you would pass the Authorization
+In the following paragraphs, where we describe the different API features, we will give examples on how you would pass the Authorization
 as part of the HTTP Request Headers, but until then, here is an example of a valid header:
 
 `Authorization: Bearer 1212845e-3517-436f-8f31-86cfb51f6251`
@@ -127,12 +127,12 @@ have the following properties:
 
 Name                        | Type    | Description                                                                                                                                                                                                                                                                | Example
 ----------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------
-`toMobileNumber`            | string  | The mobile number this sms will be sent to. It can be a comma-separated, semi-colon separated list of mobile numbers.                                                                                                                                                      | `306972669766` or `306972669766;306972669764`
-`toGroup`                   | string  | The name of the Group this sms will be sent to. Group is one of your groups regisered in the application.                                                                                                                                                                  | `High Valued Customers`
+`toMobileNumber`            | string  | The mobile number this sms will be sent to. It can be a comma-separated or semi-colon separated list of mobile numbers.                                                                                                                                                      | `306972669766` or `306972669766;306972669764`
+`toGroup`                   | string  | The name of the Group this sms will be sent to. Group is one of your groups registered in the application.                                                                                                                                                                  | `High Valued Customers`
 `fromLabel`                 | string  | The sender identifier. One of the sender ids that you have registered in the application.                                                                                                                                                                                  | `BOXNOW`
 `smsBody`                   | string  | The SMS content.                                                                                                                                                                                                                                                           | `Hello! You have just won 5 Euro Gift Card!`
-`clientRequestId`           | string  | The client request id that will be attached to the sms request. This is optional. It can be used for search/reporting. It's a business-level value that makes sense to your own business. The application does not process it at all, other than for indexing the message. | `9543212`
-`callbackWhenProcessedFlag` | boolean | Default `false``. When `true``, SMS server will call the callback api endpoint to report back the status of delivery. You must have set up a callback api in the application settings.                                                                                     | `true`
+`clientRequestId`           | string  | The client request id that will be attached to the sms request. This is optional. It can be used for searching/reporting. It's a business-level value that makes sense to your own business. The application does not process it at all, other than for indexing the message. | `9543212`
+`callbackWhenProcessedFlag` | boolean | Default `false`. When `true`, SMS server will call the callback api endpoint to report back the status of delivery. You must have set up a callback api in the application settings.                                                                                     | `true`
 `simulateSendFlag`          | boolean | Default `false`. When `true`, the SMS will not actually be delivered. This can be used to test the integration without consuming credits.                                                                                                                                  | `false`
 
 ### HTTP Response
@@ -375,13 +375,16 @@ the response body will be:
 ## Delivery Updates via a Callback Webhook
 
 You can set up your own endpoint which <%= config[:app_name] %> API will call every time there is an update
-on the status of an outgoing SMS.
+on the status of an outgoing SMS. However, in order for this to take place, you need to have set the value
+of parameter `callbackWhenProcessedFlag` to `true` when sending an SMS.
 
 Go to `Actions -> Settings` and locate the section `Callbacks API`. The Callback URL is a service offered by
 <%= config[:app_name] %>. It gives you the ability to receive delivery reports via a specific URL.
 You specify the URL, as well as whether you want the HTTP request to be a `GET` or a `POST` request.
-Also, optionally, you can pick up one of the available HTTP headers (see below) and ask the service to send them
-alongside with their values, values that you can set to anything you see necessary.
+
+Moreover, each call the <%= config[:app_name] %> API does to your service as a callback, it will have
+a signature that you can check to make sure that the request is legitimate and it is coming from our
+servers. This signature is delivered in the HTTP Request Header `<%= config[:signature_header] %>`
 
 Whenever we need to update the status of a message, we will be calling your callback endpoint.
 
@@ -396,8 +399,8 @@ Parameter Name               | Type   | Description
 `internalSmsOutDeliveryId`   | string | This is unique identifier for each SMS sent out. It is internally generated.
 `senderId`                   | string | This is the Sender Identifier that has been used to send the SMS out.
 `mobileNumber`               | string | This is the mobile number that the SMS has been sent out to.
-`status`                     | string | This is the delivery status of the outgoing SMS. Read about the possible valus above.
-`errorDescription`           | string | Usually it contains `no error`` but it may contain an error description if the status implies an error.
+`status`                     | string | This is the delivery status of the outgoing SMS. Read about the possible values above.
+`errorDescription`           | string | Usually it contains `no error` but it may contain an error description if the status implies an error.
 `requestTimestamp`           | string | The timestamp, in iso8601 standard, the SMS request was received by our systems.
 `lastStatusUpdatedTimestamp` | string | The timestamp of the last status update.
 
@@ -405,16 +408,92 @@ Note that if you specify the HTTP Verb to be `POST` then the parameters will be 
 in the body of the request encoded as a JSON object. If you, instead, prefer the HTTP Verb to be
 `GET` then the parameters alongside their values are being URL-encoded.
 
-### Available HTTP Request Headers
+### Signature of the Callback Request
 
-You can specify the following HTTP Request Headers to be sent over to your callback endpoint:
+As we said above, for each callback request to your callback endpoint, the request will have an HTTP Header
+with name `<%= config[:signature_header] %>` and value that signs the request.
 
-Name                  |
-----------------------|
-`Authorization`       |
-`From`                |
-`Pragma`              |
-`Proxy authorization` |
+The signature can be double-checked with the following algorithm:
+
+1. Take the signature key that you have set up in the Application Settings.
+1. If the callback request is a `POST` request, take the `Content-Type` header value from the request. Otherwise,
+consider the content type equal to a blank string `""`, even if it might have a value.
+1. Take the request path.
+1. Take the payload. For `POST` requests it is the body of the request. For `GET` requests it is the
+query string.
+1. Take the value of the request header `Date`.
+1. Create a comma-separated list of the values for
+  - request method lower cased, i.e. `get` or `post`
+  - content type
+  - request path
+  - payload
+  - date header value
+1. Using the string you created in the previous step and the signing secret create a SHA256 hex digest,
+where the signing secret is used as a key and the string as the data.
+1. Compare the resulting SHA256 hex digest to the incoming signature. They should match.
+
+Here is an example of checking the signature in a Ruby on Rails project:
+
+```ruby
+require 'openssl'
+
+class CallbacksController < ApplicationController
+  skip_before_action :verify_authenticity_token
+
+  def callback
+    # Retrieve the incoming signature from the request headers
+    incoming_signature = request.headers['<%= config[:signature_header] %>']
+
+    # Retrieve the secret key from your application settings
+    signing_secret = ENV['SIGNATURE_KEY'] # here we assume that you pass it as an environment variable
+
+    # Perform the signature validation
+    if valid_signature?(incoming_signature, signing_secret)
+      render json: { message: "Signature valid" }, status: :ok
+    else
+      render json: { message: "Invalid signature" }, status: :unauthorized
+    end
+  end
+
+  private
+
+  def valid_signature?(incoming_signature, signing_secret)
+    # Step 1: Get the request method (lowercased)
+    request_method = request.method.downcase
+
+    # Step 2: Get the Content-Type header or use a blank string if method `get`
+    content_type = request.post? ? request.headers['Content-Type'].to_s : ""
+
+    # Step 3: Get the request path
+    request_path = request.path
+
+    # Step 4: Get the payload (body for POST, query string for GET)
+    payload = if request.post?
+                request.body.read # Body of the POST request
+              else
+                request.query_string # Query string for GET requests
+              end
+
+    # Step 5: Get the Date header value
+    date_header = request.headers['Date']
+
+    # Step 6: Create the string to sign
+    string_to_sign = [
+      request_method,
+      content_type,
+      request_path,
+      payload,
+      date_header
+    ].join(',')
+
+    # Step 7: Create the SHA256 hex digest using the signing secret as the key
+    digest = OpenSSL::HMAC.hexdigest('SHA256', signing_secret, string_to_sign)
+
+    # Compare the resulting digest with the incoming signature
+    ActiveSupport::SecurityUtils.secure_compare(digest, incoming_signature)
+  end
+end
+````
 
 ## More API Endpoints on the Way
 

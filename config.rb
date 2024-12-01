@@ -62,6 +62,8 @@ set :api_domain_name, ENV.fetch('API_DOMAIN_NAME')
 set :app_domain_name, ENV.fetch('APP_DOMAIN_NAME')
 set :app_name, ENV.fetch('APP_NAME')
 set :app_name_in_signature_header, ENV.fetch('APP_NAME_IN_SIGNATURE_HEADER')
+set :signature_header_suffix, ENV.fetch('SIGNATURE_HEADER_SUFFIX')
+set :signature_header, "#{config[:app_name_in_signature_header]}-#{config[:signature_header_suffix]}"
 set :presentation_site_domain_name, ENV.fetch('PRESENTATION_SITE_DOMAIN_NAME')
 
 helpers do
