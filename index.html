@@ -370,7 +370,7 @@ and replace it with a new one. You might want to keep both active at the same ti
 systems that integrate with Rayo SMS finally use the new API key. Or you can use two different API keys for
 different purposes. It&#39;s up to you.</p>
 
-<p>In the following paragraphs, where we describe the differen API features, we will give examples on how you would pass the Authorization
+<p>In the following paragraphs, where we describe the different API features, we will give examples on how you would pass the Authorization
 as part of the HTTP Request Headers, but until then, here is an example of a valid header:</p>
 
 <p><code>Authorization: Bearer 1212845e-3517-436f-8f31-86cfb51f6251</code></p>
@@ -465,13 +465,13 @@ have the following properties:</p>
 <tr>
 <td><code>toMobileNumber</code></td>
 <td>string</td>
-<td>The mobile number this sms will be sent to. It can be a comma-separated, semi-colon separated list of mobile numbers.</td>
+<td>The mobile number this sms will be sent to. It can be a comma-separated or semi-colon separated list of mobile numbers.</td>
 <td><code>306972669766</code> or <code>306972669766;306972669764</code></td>
 </tr>
 <tr>
 <td><code>toGroup</code></td>
 <td>string</td>
-<td>The name of the Group this sms will be sent to. Group is one of your groups regisered in the application.</td>
+<td>The name of the Group this sms will be sent to. Group is one of your groups registered in the application.</td>
 <td><code>High Valued Customers</code></td>
 </tr>
 <tr>
@@ -489,13 +489,13 @@ have the following properties:</p>
 <tr>
 <td><code>clientRequestId</code></td>
 <td>string</td>
-<td>The client request id that will be attached to the sms request. This is optional. It can be used for search/reporting. It&#39;s a business-level value that makes sense to your own business. The application does not process it at all, other than for indexing the message.</td>
+<td>The client request id that will be attached to the sms request. This is optional. It can be used for searching/reporting. It&#39;s a business-level value that makes sense to your own business. The application does not process it at all, other than for indexing the message.</td>
 <td><code>9543212</code></td>
 </tr>
 <tr>
 <td><code>callbackWhenProcessedFlag</code></td>
 <td>boolean</td>
-<td>Default <code>false</code><code>. When</code>true``, SMS server will call the callback api endpoint to report back the status of delivery. You must have set up a callback api in the application settings.</td>
+<td>Default <code>false</code>. When <code>true</code>, SMS server will call the callback api endpoint to report back the status of delivery. You must have set up a callback api in the application settings.</td>
 <td><code>true</code></td>
 </tr>
 <tr>
@@ -832,13 +832,16 @@ the response body will be:</p>
 </aside>
 <h2 id='delivery-updates-via-a-callback-webhook'>Delivery Updates via a Callback Webhook</h2>
 <p>You can set up your own endpoint which Rayo SMS API will call every time there is an update
-on the status of an outgoing SMS.</p>
+on the status of an outgoing SMS. However, in order for this to take place, you need to have set the value
+of parameter <code>callbackWhenProcessedFlag</code> to <code>true</code> when sending an SMS.</p>
 
 <p>Go to <code>Actions -&gt; Settings</code> and locate the section <code>Callbacks API</code>. The Callback URL is a service offered by
 Rayo SMS. It gives you the ability to receive delivery reports via a specific URL.
-You specify the URL, as well as whether you want the HTTP request to be a <code>GET</code> or a <code>POST</code> request.
-Also, optionally, you can pick up one of the available HTTP headers (see below) and ask the service to send them
-alongside with their values, values that you can set to anything you see necessary.</p>
+You specify the URL, as well as whether you want the HTTP request to be a <code>GET</code> or a <code>POST</code> request.</p>
+
+<p>Moreover, each call the Rayo SMS API does to your service as a callback, it will have
+a signature that you can check to make sure that the request is legitimate and it is coming from our
+servers. This signature is delivered in the HTTP Request Header <code>Rayo-SMS-Signature</code></p>
 
 <p>Whenever we need to update the status of a message, we will be calling your callback endpoint.</p>
 <h3 id='parameters-attributes-of-payload'>Parameters/Attributes of payload</h3>
@@ -879,12 +882,12 @@ alongside with their values, values that you can set to anything you see necessa
 <tr>
 <td><code>status</code></td>
 <td>string</td>
-<td>This is the delivery status of the outgoing SMS. Read about the possible valus above.</td>
+<td>This is the delivery status of the outgoing SMS. Read about the possible values above.</td>
 </tr>
 <tr>
 <td><code>errorDescription</code></td>
 <td>string</td>
-<td>Usually it contains <code>no error</code>` but it may contain an error description if the status implies an error.</td>
+<td>Usually it contains <code>no error</code> but it may contain an error description if the status implies an error.</td>
 </tr>
 <tr>
 <td><code>requestTimestamp</code></td>
@@ -901,28 +904,94 @@ alongside with their values, values that you can set to anything you see necessa
 <p>Note that if you specify the HTTP Verb to be <code>POST</code> then the parameters will be delivered to you
 in the body of the request encoded as a JSON object. If you, instead, prefer the HTTP Verb to be
 <code>GET</code> then the parameters alongside their values are being URL-encoded.</p>
-<h3 id='available-http-request-headers'>Available HTTP Request Headers</h3>
-<p>You can specify the following HTTP Request Headers to be sent over to your callback endpoint:</p>
+<h3 id='signature-of-the-callback-request'>Signature of the Callback Request</h3>
+<p>As we said above, for each callback request to your callback endpoint, the request will have an HTTP Header
+with name <code>Rayo-SMS-Signature</code> and value that signs the request.</p>
 
-<table><thead>
-<tr>
-<th>Name</th>
-</tr>
-</thead><tbody>
-<tr>
-<td><code>Authorization</code></td>
-</tr>
-<tr>
-<td><code>From</code></td>
-</tr>
-<tr>
-<td><code>Pragma</code></td>
-</tr>
-<tr>
-<td><code>Proxy authorization</code></td>
-</tr>
-</tbody></table>
-<h2 id='more-api-endpoints-on-the-way'>More API Endpoints on the Way</h2>
+<p>The signature can be double-checked with the following algorithm:</p>
+
+<ol>
+<li>Take the signature key that you have set up in the Application Settings.</li>
+<li>If the callback request is a <code>POST</code> request, take the <code>Content-Type</code> header value from the request. Otherwise,
+consider the content type equal to a blank string <code>&quot;&quot;</code>, even if it might have a value.</li>
+<li>Take the request path.</li>
+<li>Take the payload. For <code>POST</code> requests it is the body of the request. For <code>GET</code> requests it is the
+query string.</li>
+<li>Take the value of the request header <code>Date</code>.</li>
+<li>Create a comma-separated list of the values for
+
+<ul>
+<li>request method lower cased, i.e. <code>get</code> or <code>post</code></li>
+<li>content type</li>
+<li>request path</li>
+<li>payload</li>
+<li>date header value</li>
+</ul></li>
+<li>Using the string you created in the previous step and the signing secret create a SHA256 hex digest,
+where the signing secret is used as a key and the string as the data.</li>
+<li>Compare the resulting SHA256 hex digest to the incoming signature. They should match.</li>
+</ol>
+
+<p>Here is an example of checking the signature in a Ruby on Rails project:</p>
+<div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'openssl'</span>
+
+<span class="k">class</span> <span class="nc">CallbacksController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="n">skip_before_action</span> <span class="ss">:verify_authenticity_token</span>
+
+  <span class="k">def</span> <span class="nf">callback</span>
+    <span class="c1"># Retrieve the incoming signature from the request headers</span>
+    <span class="n">incoming_signature</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">headers</span><span class="p">[</span><span class="s1">'Rayo-SMS-Signature'</span><span class="p">]</span>
+
+    <span class="c1"># Retrieve the secret key from your application settings</span>
+    <span class="n">signing_secret</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'SIGNATURE_KEY'</span><span class="p">]</span> <span class="c1"># here we assume that you pass it as an environment variable</span>
+
+    <span class="c1"># Perform the signature validation</span>
+    <span class="k">if</span> <span class="n">valid_signature?</span><span class="p">(</span><span class="n">incoming_signature</span><span class="p">,</span> <span class="n">signing_secret</span><span class="p">)</span>
+      <span class="n">render</span> <span class="ss">json: </span><span class="p">{</span> <span class="ss">message: </span><span class="s2">"Signature valid"</span> <span class="p">},</span> <span class="ss">status: :ok</span>
+    <span class="k">else</span>
+      <span class="n">render</span> <span class="ss">json: </span><span class="p">{</span> <span class="ss">message: </span><span class="s2">"Invalid signature"</span> <span class="p">},</span> <span class="ss">status: :unauthorized</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">valid_signature?</span><span class="p">(</span><span class="n">incoming_signature</span><span class="p">,</span> <span class="n">signing_secret</span><span class="p">)</span>
+    <span class="c1"># Step 1: Get the request method (lowercased)</span>
+    <span class="n">request_method</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">method</span><span class="p">.</span><span class="nf">downcase</span>
+
+    <span class="c1"># Step 2: Get the Content-Type header or use a blank string if method `get`</span>
+    <span class="n">content_type</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">post?</span> <span class="p">?</span> <span class="n">request</span><span class="p">.</span><span class="nf">headers</span><span class="p">[</span><span class="s1">'Content-Type'</span><span class="p">].</span><span class="nf">to_s</span> <span class="p">:</span> <span class="s2">""</span>
+
+    <span class="c1"># Step 3: Get the request path</span>
+    <span class="n">request_path</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">path</span>
+
+    <span class="c1"># Step 4: Get the payload (body for POST, query string for GET)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="k">if</span> <span class="n">request</span><span class="p">.</span><span class="nf">post?</span>
+                <span class="n">request</span><span class="p">.</span><span class="nf">body</span><span class="p">.</span><span class="nf">read</span> <span class="c1"># Body of the POST request</span>
+              <span class="k">else</span>
+                <span class="n">request</span><span class="p">.</span><span class="nf">query_string</span> <span class="c1"># Query string for GET requests</span>
+              <span class="k">end</span>
+
+    <span class="c1"># Step 5: Get the Date header value</span>
+    <span class="n">date_header</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">headers</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">]</span>
+
+    <span class="c1"># Step 6: Create the string to sign</span>
+    <span class="n">string_to_sign</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="n">request_method</span><span class="p">,</span>
+      <span class="n">content_type</span><span class="p">,</span>
+      <span class="n">request_path</span><span class="p">,</span>
+      <span class="n">payload</span><span class="p">,</span>
+      <span class="n">date_header</span>
+    <span class="p">].</span><span class="nf">join</span><span class="p">(</span><span class="s1">','</span><span class="p">)</span>
+
+    <span class="c1"># Step 7: Create the SHA256 hex digest using the signing secret as the key</span>
+    <span class="n">digest</span> <span class="o">=</span> <span class="no">OpenSSL</span><span class="o">::</span><span class="no">HMAC</span><span class="p">.</span><span class="nf">hexdigest</span><span class="p">(</span><span class="s1">'SHA256'</span><span class="p">,</span> <span class="n">signing_secret</span><span class="p">,</span> <span class="n">string_to_sign</span><span class="p">)</span>
+
+    <span class="c1"># Compare the resulting digest with the incoming signature</span>
+    <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">SecurityUtils</span><span class="p">.</span><span class="nf">secure_compare</span><span class="p">(</span><span class="n">digest</span><span class="p">,</span> <span class="n">incoming_signature</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div><h2 id='more-api-endpoints-on-the-way'>More API Endpoints on the Way</h2>
 <p>We are in the process of developing more API endpoints that will allow you to</p>
 
 <ul>
