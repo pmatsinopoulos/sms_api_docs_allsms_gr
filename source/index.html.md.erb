@@ -55,7 +55,7 @@ public. Always use end-to-end encryption (`HTTPS`) between the client applicatio
 ## Sending an SMS
 
 ```shell
-$ curl -v -X POST 'https://sms-api.rayo.gr/v1/send_sms' \
+$ curl -v -X POST 'https://<%= config[:api_domain_name] %>/v1/send_sms' \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5' \
@@ -75,7 +75,7 @@ require 'rest-client'
 api_key = '5a2a5816-5f32-4234-a9a1-7d59986c06a5'
 sms_body = 'test message'
 
-url = 'https://sms-api.rayo.gr/v1/send_sms'
+url = 'https://<%= config[:api_domain_name] %>/v1/send_sms'
 payload = {
   toMobileNumber: '6972669766',
   fromLabel: '306972669766',
@@ -161,7 +161,7 @@ With regards to error handling, you can [read the corresponding section bellow](
 ## Get Balance in Credits
 
 ```shell
-$ curl -v -X POST 'https://sms-api.rayo.gr/v1/balance_in_credits' \
+$ curl -v -X POST 'https://<%= config[:api_domain_name] %>/v1/balance_in_credits' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'
 ```
@@ -174,7 +174,7 @@ require 'rest-client'
 
 api_key = '5a2a5816-5f32-4234-a9a1-7d59986c06a5'
 
-url = 'https://sms-api.rayo.gr/v1/balance_in_credits'
+url = 'https://<%= config[:api_domain_name] %>/v1/balance_in_credits'
 headers = {
   'Accept' => 'application/json',
   'Authorization' => "Bearer #{api_key}"
@@ -234,13 +234,13 @@ With regards to error handling, you can [read the corresponding section bellow](
 ```shell
 # Get the status of an SMS request by Client Request Id (clientRequestId).
 #
-$ curl -v -X GET 'https://sms-api.rayo.gr/v1/check_status?clientRequestId=<a-client-request-id>'' \
+$ curl -v -X GET 'https://<%= config[:api_domain_name] %>/v1/check_status?clientRequestId=<a-client-request-id>'' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'
 
 # Get the status of an SMS request by SMS Server Request Id (smsServerRequestId).
 #
-$ curl -v -X GET 'https://sms-api.rayo.gr/v1/check_status?smsServerRequestId=<an-sms-serveer-request-id>'' \
+$ curl -v -X GET 'https://<%= config[:api_domain_name] %>/v1/check_status?smsServerRequestId=<an-sms-serveer-request-id>'' \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'
 ```
@@ -255,7 +255,7 @@ api_key = '5a2a5816-5f32-4234-a9a1-7d59986c06a5'
 
 # Get the status of an SMS request by Client Request Id (clientRequestId).
 #
-url = 'https://sms-api.rayo.gr/v1/check_status?clientRequestId=<a-client-request-id>'
+url = 'https://<%= config[:api_domain_name] %>/v1/check_status?clientRequestId=<a-client-request-id>'
 headers = {
   'Accept' => 'application/json',
   'Authorization' => "Bearer #{api_key}"
@@ -265,7 +265,7 @@ response = RestClient.get url, headers
 
 # Get the status of an SMS request by SMS Server Request Id (smsServerRequestId).
 #
-url = 'https://sms-api.rayo.gr/v1/check_status?smsServerRequestId=<an-sms-server-request-id>'
+url = 'https://<%= config[:api_domain_name] %>/v1/check_status?smsServerRequestId=<an-sms-server-request-id>'
 headers = {
   'Accept' => 'application/json',
   'Authorization' => "Bearer #{api_key}"
