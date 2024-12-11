@@ -9,7 +9,7 @@
             name="description"
             content="Documentation for the <%= config[:app_name] %> API"
         >
-    <title>API Documentation - Rayo SMS</title>
+    <title>API Documentation - SMS ALL</title>
 
     <style media="screen">
       .highlight table td { padding: 5px; }
@@ -303,7 +303,7 @@
       </span>
     </a>
     <div class="toc-wrapper">
-      <img src="images/rayo-4e3183ee.png" class="logo" alt="" />
+      <img src="images/allsms-b72d7e01.jpg" class="logo" alt="" />
         <div class="lang-selector">
               <a href="#" data-language-name="shell">shell</a>
               <a href="#" data-language-name="ruby">ruby</a>
@@ -351,23 +351,23 @@
       <div class="dark-box"></div>
       <div class="content">
         <h1 id='introduction'>Introduction</h1>
-<p>Welcome to the <a href="https://www.rayo.gr">Rayo SMS</a> API documentation.</p>
+<p>Welcome to the <a href="https://www.allsms.gr">SMS ALL</a> API documentation.</p>
 
-<p>You need to study this guide if you want to integrate your application with Web-to-SMS Functionality via <a href="https://www.rayo.gr">Rayo SMS</a>.</p>
+<p>You need to study this guide if you want to integrate your application with Web-to-SMS Functionality via <a href="https://www.allsms.gr">SMS ALL</a>.</p>
 <h1 id='base-endpoint'>Base Endpoint</h1>
 <p>The endpoint that you should be sending your API requests to is:</p>
 
 <aside class="success">
-https://sms-api.rayo.gr/v1/
+https://sms-api.allsms.gr/v1/
 </aside>
 <h1 id='authentication'>Authentication</h1>
 <p>The endpoint, although public, it requires that you send your own, private, API Key as part of the HTTP <code>Authorization</code> header.</p>
 
-<p>You can get and manage your API keys from the <code>Actions -&gt; Settings</code> page inside the Rayo SMS Web application.</p>
+<p>You can get and manage your API keys from the <code>Actions -&gt; Settings</code> page inside the SMS ALL Web application.</p>
 
 <p>Note that you can have many API keys active at the same time. This will be useful when you decide to decommission an old API key
 and replace it with a new one. You might want to keep both active at the same time for a short period of time until all of your
-systems that integrate with Rayo SMS finally use the new API key. Or you can use two different API keys for
+systems that integrate with SMS ALL finally use the new API key. Or you can use two different API keys for
 different purposes. It&#39;s up to you.</p>
 
 <p>In the following paragraphs, where we describe the different API features, we will give examples on how you would pass the Authorization
@@ -378,8 +378,8 @@ as part of the HTTP Request Headers, but until then, here is an example of a val
 <p>Where <code>1212845e-3517-436f-8f31-86cfb51f6251</code>, is valid API key. Replace this, with your own API key.</p>
 
 <p><strong>Important</strong>: Treat the API keys as confidential as you keep your passwords. Do not store them in version control systems and do not reveal to
-public. Always use end-to-end encryption (<code>HTTPS</code>) between the client application and the Rayo SMS endpoints when using the API.</p>
-<h1 id='api-reference'>API Reference</h1><h2 id='sending-an-sms'>Sending an SMS</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="nv">$ </span>curl <span class="nt">-v</span> <span class="nt">-X</span> POST <span class="s1">'https://sms-api.rayo.gr/v1/send_sms'</span> <span class="se">\</span>
+public. Always use end-to-end encryption (<code>HTTPS</code>) between the client application and the SMS ALL endpoints when using the API.</p>
+<h1 id='api-reference'>API Reference</h1><h2 id='sending-an-sms'>Sending an SMS</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="nv">$ </span>curl <span class="nt">-v</span> <span class="nt">-X</span> POST <span class="s1">'https://sms-api.allsms.gr/v1/send_sms'</span> <span class="se">\</span>
   <span class="nt">-H</span> <span class="s1">'Content-Type: application/json'</span> <span class="se">\</span>
   <span class="nt">-H</span> <span class="s1">'Accept: application/json'</span> <span class="se">\</span>
   <span class="nt">-H</span> <span class="s1">'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span> <span class="se">\</span>
@@ -396,7 +396,7 @@ public. Always use end-to-end encryption (<code>HTTPS</code>) between the client
 <span class="n">api_key</span> <span class="o">=</span> <span class="s1">'5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span>
 <span class="n">sms_body</span> <span class="o">=</span> <span class="s1">'test message'</span>
 
-<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.rayo.gr/v1/send_sms'</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.allsms.gr/v1/send_sms'</span>
 <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
   <span class="ss">toMobileNumber: </span><span class="s1">'6972669766'</span><span class="p">,</span>
   <span class="ss">fromLabel: </span><span class="s1">'306972669766'</span><span class="p">,</span>
@@ -551,7 +551,7 @@ a body that will be a JSON object encoded as string. The JSON object will have t
 <p>Take a look at the <code>Example Response JSON object</code>.</p>
 <h4 id='error'>Error</h4>
 <p>With regards to error handling, you can <a href="#errors">read the corresponding section bellow</a>.</p>
-<h2 id='get-balance-in-credits'>Get Balance in Credits</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="nv">$ </span>curl <span class="nt">-v</span> <span class="nt">-X</span> POST <span class="s1">'https://sms-api.rayo.gr/v1/balance_in_credits'</span> <span class="se">\</span>
+<h2 id='get-balance-in-credits'>Get Balance in Credits</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="nv">$ </span>curl <span class="nt">-v</span> <span class="nt">-X</span> POST <span class="s1">'https://sms-api.allsms.gr/v1/balance_in_credits'</span> <span class="se">\</span>
   <span class="nt">-H</span> <span class="s1">'Accept: application/json'</span> <span class="se">\</span>
   <span class="nt">-H</span> <span class="s1">'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span>
 </code></pre></div><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="c1"># This Ruby example uses [Rest Client library](https://github.com/rest-client/rest-client).</span>
@@ -561,7 +561,7 @@ a body that will be a JSON object encoded as string. The JSON object will have t
 
 <span class="n">api_key</span> <span class="o">=</span> <span class="s1">'5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span>
 
-<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.rayo.gr/v1/balance_in_credits'</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.allsms.gr/v1/balance_in_credits'</span>
 <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
   <span class="s1">'Accept'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span>
   <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">"</span>
@@ -635,13 +635,13 @@ a body that will be a JSON object encoded as string. The JSON object will have t
 <p>With regards to error handling, you can <a href="#errors">read the corresponding section bellow</a>.</p>
 <h2 id='check-status-of-sms-request'>Check Status of Sms Request</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Get the status of an SMS request by Client Request Id (clientRequestId).</span>
 <span class="c">#</span>
-<span class="nv">$ </span>curl <span class="nt">-v</span> <span class="nt">-X</span> GET <span class="s1">'https://sms-api.rayo.gr/v1/check_status?clientRequestId=&lt;a-client-request-id&gt;'' \
+<span class="nv">$ </span>curl <span class="nt">-v</span> <span class="nt">-X</span> GET <span class="s1">'https://sms-api.allsms.gr/v1/check_status?clientRequestId=&lt;a-client-request-id&gt;'' \
   -H '</span>Accept: application/json<span class="s1">' \
   -H '</span>Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5<span class="s1">'
 
 # Get the status of an SMS request by SMS Server Request Id (smsServerRequestId).
 #
-$ curl -v -X GET '</span>https://sms-api.rayo.gr/v1/check_status?smsServerRequestId<span class="o">=</span>&lt;an-sms-serveer-request-id&gt;<span class="s1">''</span> <span class="se">\</span>
+$ curl -v -X GET '</span>https://sms-api.allsms.gr/v1/check_status?smsServerRequestId<span class="o">=</span>&lt;an-sms-serveer-request-id&gt;<span class="s1">''</span> <span class="se">\</span>
   <span class="nt">-H</span> <span class="s1">'Accept: application/json'</span> <span class="se">\</span>
   <span class="nt">-H</span> <span class="s1">'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span>
 </code></pre></div><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="c1"># This Ruby example uses [Rest Client library](https://github.com/rest-client/rest-client).</span>
@@ -653,7 +653,7 @@ $ curl -v -X GET '</span>https://sms-api.rayo.gr/v1/check_status?smsServerReques
 
 <span class="c1"># Get the status of an SMS request by Client Request Id (clientRequestId).</span>
 <span class="c1">#</span>
-<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.rayo.gr/v1/check_status?clientRequestId=&lt;a-client-request-id&gt;'</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.allsms.gr/v1/check_status?clientRequestId=&lt;a-client-request-id&gt;'</span>
 <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
   <span class="s1">'Accept'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span>
   <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">"</span>
@@ -663,7 +663,7 @@ $ curl -v -X GET '</span>https://sms-api.rayo.gr/v1/check_status?smsServerReques
 
 <span class="c1"># Get the status of an SMS request by SMS Server Request Id (smsServerRequestId).</span>
 <span class="c1">#</span>
-<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.rayo.gr/v1/check_status?smsServerRequestId=&lt;an-sms-server-request-id&gt;'</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.allsms.gr/v1/check_status?smsServerRequestId=&lt;an-sms-server-request-id&gt;'</span>
 <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
   <span class="s1">'Accept'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span>
   <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">"</span>
@@ -831,17 +831,17 @@ the response body will be:</p>
 </code>
 </aside>
 <h2 id='delivery-updates-via-a-callback-webhook'>Delivery Updates via a Callback Webhook</h2>
-<p>You can set up your own endpoint which Rayo SMS API will call every time there is an update
+<p>You can set up your own endpoint which SMS ALL API will call every time there is an update
 on the status of an outgoing SMS. However, in order for this to take place, you need to have set the value
 of parameter <code>callbackWhenProcessedFlag</code> to <code>true</code> when sending an SMS.</p>
 
 <p>Go to <code>Actions -&gt; Settings</code> and locate the section <code>Callbacks API</code>. The Callback URL is a service offered by
-Rayo SMS. It gives you the ability to receive delivery reports via a specific URL.
+SMS ALL. It gives you the ability to receive delivery reports via a specific URL.
 You specify the URL, as well as whether you want the HTTP request to be a <code>GET</code> or a <code>POST</code> request.</p>
 
-<p>Moreover, each call the Rayo SMS API does to your service as a callback, it will have
+<p>Moreover, each call the SMS ALL API does to your service as a callback, it will have
 a signature that you can check to make sure that the request is legitimate and it is coming from our
-servers. This signature is delivered in the HTTP Request Header <code>Rayo-SMS-Signature</code></p>
+servers. This signature is delivered in the HTTP Request Header <code>SMS-ALL-Signature</code></p>
 
 <p>Whenever we need to update the status of a message, we will be calling your callback endpoint.</p>
 <h3 id='parameters-attributes-of-payload'>Parameters/Attributes of payload</h3>
@@ -906,7 +906,7 @@ in the body of the request encoded as a JSON object. If you, instead, prefer the
 <code>GET</code> then the parameters alongside their values are being URL-encoded.</p>
 <h3 id='signature-of-the-callback-request'>Signature of the Callback Request</h3>
 <p>As we said above, for each callback request to your callback endpoint, the request will have an HTTP Header
-with name <code>Rayo-SMS-Signature</code> and value that signs the request.</p>
+with name <code>SMS-ALL-Signature</code> and value that signs the request.</p>
 
 <p>The signature can be double-checked with the following algorithm:</p>
 
@@ -940,7 +940,7 @@ where the signing secret is used as a key and the string as the data.</li>
 
   <span class="k">def</span> <span class="nf">callback</span>
     <span class="c1"># Retrieve the incoming signature from the request headers</span>
-    <span class="n">incoming_signature</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">headers</span><span class="p">[</span><span class="s1">'Rayo-SMS-Signature'</span><span class="p">]</span>
+    <span class="n">incoming_signature</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">headers</span><span class="p">[</span><span class="s1">'SMS-ALL-Signature'</span><span class="p">]</span>
 
     <span class="c1"># Retrieve the secret key from your application settings</span>
     <span class="n">signing_secret</span> <span class="o">=</span> <span class="no">ENV</span><span class="p">[</span><span class="s1">'SIGNATURE_KEY'</span><span class="p">]</span> <span class="c1"># here we assume that you pass it as an environment variable</span>
@@ -999,7 +999,7 @@ where the signing secret is used as a key and the string as the data.</li>
 <li>Manage groups</li>
 </ul>
 <h1 id='errors'>Errors</h1>
-<p>A lot of things might go wrong with your HTTP Requests. Rayo SMS API returns
+<p>A lot of things might go wrong with your HTTP Requests. SMS ALL API returns
 <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status">Standard HTTP Response Status Codes</a> to
 indicate the success or failure of the request.</p>
 
@@ -1024,7 +1024,7 @@ causes of error:</p>
 </tr>
 <tr>
 <td><code>500-599</code></td>
-<td>Indicates an error that took place on the server side. Rayo SMS developers are automatically notified for such errors and will immediately try to remedy this situation. If your problem persists, use the contact form on Rayo SMS Web site to report the problem.</td>
+<td>Indicates an error that took place on the server side. SMS ALL developers are automatically notified for such errors and will immediately try to remedy this situation. If your problem persists, use the contact form on SMS ALL Web site to report the problem.</td>
 </tr>
 </tbody></table>
 
