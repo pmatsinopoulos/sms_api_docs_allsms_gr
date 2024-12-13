@@ -99,7 +99,8 @@ response = RestClient.post url, payload, headers
     "resultCode": "1",
     "resultDescription": "SUCCESS",
     "clientRequestId": "932831",
-    "smsServerRequestId": "cc479845-0f15-4ae7-b645-6ef6489868c1"
+    "smsServerRequestId": "cc479845-0f15-4ae7-b645-6ef6489868c1",
+    "smsRequestScheduleId": "e0b107da-669a-40f5-b4d0-24fc70409307"
   }
 }
 ```
@@ -125,15 +126,17 @@ have the following properties:
 
 ### JSON Object Properties
 
-Name                        | Type    | Description                                                                                                                                                                                                                                                                | Example
-----------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------
-`toMobileNumber`            | string  | The mobile number this sms will be sent to. It can be a comma-separated or semi-colon separated list of mobile numbers.                                                                                                                                                      | `306972669766` or `306972669766;306972669764`
-`toGroup`                   | string  | The name of the Group this sms will be sent to. Group is one of your groups registered in the application.                                                                                                                                                                  | `High Valued Customers`
-`fromLabel`                 | string  | The sender identifier. One of the sender ids that you have registered in the application.                                                                                                                                                                                  | `BOXNOW`
-`smsBody`                   | string  | The SMS content.                                                                                                                                                                                                                                                           | `Hello! You have just won 5 Euro Gift Card!`
+Name                        | Type    | Description                                                                                                                                                                                                                                                                   | Example
+----------------------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------
+`toMobileNumber`            | string  | The mobile number this sms will be sent to. It can be a comma-separated or semi-colon separated list of mobile numbers.                                                                                                                                                       | `306972669766` or `306972669766;306972669764`
+`toGroup`                   | string  | The name of the Group this sms will be sent to. Group is one of your groups registered in the application. You can specify multiple groups separated using `;`                                                                                                                | `High Valued Customers;Promotion Customers`
+`fromLabel`                 | string  | The sender identifier. One of the sender ids that you have registered in the application.                                                                                                                                                                                     | `BOXNOW`
+`smsBody`                   | string  | The SMS content.                                                                                                                                                                                                                                                              | `Hello! You have just won 5 Euro Gift Card!`
 `clientRequestId`           | string  | The client request id that will be attached to the sms request. This is optional. It can be used for searching/reporting. It's a business-level value that makes sense to your own business. The application does not process it at all, other than for indexing the message. | `9543212`
-`callbackWhenProcessedFlag` | boolean | Default `false`. When `true`, SMS server will call the callback api endpoint to report back the status of delivery. You must have set up a callback api in the application settings.                                                                                     | `true`
-`simulateSendFlag`          | boolean | Default `false`. When `true`, the SMS will not actually be delivered. This can be used to test the integration without consuming credits.                                                                                                                                  | `false`
+`callbackWhenProcessedFlag` | boolean | Default `false`. When `true`, SMS server will call the callback api endpoint to report back the status of delivery. You must have set up a callback api in the application settings.                                                                                          | `true`
+`simulateSendFlag`          | boolean | Default `false`. When `true`, the SMS will not actually be delivered. This can be used to test the integration without consuming credits.                                                                                                                                     | `false`
+`scheduledAt`               | string  | You can schedule a delivery to take place in the future. **Important:** It should not be earlier than 5 minutes in the future. It needs to be ISO8601 with Time Zone representation of a date and time                                                                        | `"2024-12-13T11:34:29+02:00"`
+
 
 ### HTTP Response
 
@@ -142,14 +145,15 @@ Name                        | Type    | Description                             
 On successful sending of the HTTP request, you will get back a standard HTTP response code with value `200`. It will have
 a body that will be a JSON object encoded as string. The JSON object will have the following structure:
 
-Name                        | Type   | Description
-----------------------------|--------|------------
-`result`                    | object | JSON root level object. All the other properties, below, they are properties of this object.
-`result.username`           | string | The username identified by the API key used in the incoming SMS request.
-`result.resultCode`         | string | It will have the value "1" on success. Different from "1" on failure.
-`result.resultDescription`  | string | It will have the value "SUCCESS" on success. Different from "SUCCESS" on failure.
-`result.clientRequestId`    | string | It will be either `null` or it will have the value of the `clientRequestId` sent in the incoming SMS request.
-`result.smsServerRequestId` | string | A unique identifier from the SMS server side. This uniquely identifies your SMS request.
+Name                          | Type   | Description
+------------------------------|--------|------------
+`result`                      | object | JSON root level object. All the other properties, below, they are properties of this object.
+`result.username`             | string | The username identified by the API key used in the incoming SMS request.
+`result.resultCode`           | string | It will have the value "1" on success. Different from "1" on failure.
+`result.resultDescription`    | string | It will have the value "SUCCESS" on success. Different from "SUCCESS" on failure.
+`result.clientRequestId`      | string | It will be either `null` or it will have the value of the `clientRequestId` sent in the incoming SMS request.
+`result.smsServerRequestId`   | string | A unique identifier from the SMS server side. This uniquely identifies your SMS request. It will value `null` if you schedule the SMS in the future.
+`result.smsRequestScheduleId` | string | A unique identifier of the schedule created when you schedule an SMS to be delivered in the future. It will have value `null` if you don't schedule.
 
 Take a look at the `Example Response JSON object`.
 
@@ -494,6 +498,44 @@ class CallbacksController < ApplicationController
   end
 end
 ````
+
+## Scheduling a Delivery in the Future
+
+Read about it in the [Sending an SMS section](#sending-an-sms).
+
+## Deleting a schedule
+
+```shell
+# Delete a schedule using the schedule identifier
+#
+curl -v -X DELETE 'https://<%= config[:api_domain_name] %>/v1/sms_request_schedules/e0b107da-669a-40f5-b4d0-24fc70409307' \
+-H 'Accept: application/json' \
+-H 'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5
+```
+
+```ruby
+# This Ruby example uses [Rest Client library](https://github.com/rest-client/rest-client).
+# You can use any other Ruby library that can construct standard HTTPS requests.
+#
+require 'rest-client'
+
+api_key = '5a2a5816-5f32-4234-a9a1-7d59986c06a5'
+
+# Delete a schedule using the schedule identifier
+#
+url = 'https://<%= config[:api_domain_name] %>/v1/sms_request_schedules/<schedule-identifier>'
+headers = {
+  'Accept' => 'application/json',
+  'Authorization' => "Bearer #{api_key}"
+}
+
+response = RestClient.delete url, headers
+````
+
+You can delete a schedule that you have created. This is only possible as long as the
+schedule has not fired.
+
+You have to pass the correct authorization headers as described [here](#authentication)
 
 ## More API Endpoints on the Way
 
