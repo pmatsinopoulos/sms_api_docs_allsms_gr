@@ -338,6 +338,12 @@
                     <a href="#delivery-updates-via-a-callback-webhook" class="toc-h2 toc-link" data-title="Delivery Updates via a Callback Webhook">Delivery Updates via a Callback Webhook</a>
                   </li>
                   <li>
+                    <a href="#scheduling-a-delivery-in-the-future" class="toc-h2 toc-link" data-title="Scheduling a Delivery in the Future">Scheduling a Delivery in the Future</a>
+                  </li>
+                  <li>
+                    <a href="#deleting-a-schedule" class="toc-h2 toc-link" data-title="Deleting a schedule">Deleting a schedule</a>
+                  </li>
+                  <li>
                     <a href="#more-api-endpoints-on-the-way" class="toc-h2 toc-link" data-title="More API Endpoints on the Way">More API Endpoints on the Way</a>
                   </li>
               </ul>
@@ -419,7 +425,8 @@ public. Always use end-to-end encryption (<code>HTTPS</code>) between the client
     </span><span class="nl">"resultCode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"resultDescription"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SUCCESS"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"clientRequestId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"932831"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"smsServerRequestId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cc479845-0f15-4ae7-b645-6ef6489868c1"</span><span class="w">
+    </span><span class="nl">"smsServerRequestId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cc479845-0f15-4ae7-b645-6ef6489868c1"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"smsRequestScheduleId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e0b107da-669a-40f5-b4d0-24fc70409307"</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
@@ -471,8 +478,8 @@ have the following properties:</p>
 <tr>
 <td><code>toGroup</code></td>
 <td>string</td>
-<td>The name of the Group this sms will be sent to. Group is one of your groups registered in the application.</td>
-<td><code>High Valued Customers</code></td>
+<td>The name of the Group this sms will be sent to. Group is one of your groups registered in the application. You can specify multiple groups separated using <code>;</code></td>
+<td><code>High Valued Customers;Promotion Customers</code></td>
 </tr>
 <tr>
 <td><code>fromLabel</code></td>
@@ -503,6 +510,12 @@ have the following properties:</p>
 <td>boolean</td>
 <td>Default <code>false</code>. When <code>true</code>, the SMS will not actually be delivered. This can be used to test the integration without consuming credits.</td>
 <td><code>false</code></td>
+</tr>
+<tr>
+<td><code>scheduledAt</code></td>
+<td>string</td>
+<td>You can schedule a delivery to take place in the future. <strong>Important:</strong> It should not be earlier than 5 minutes in the future. It needs to be ISO8601 with Time Zone representation of a date and time</td>
+<td><code>&quot;2024-12-13T11:34:29+02:00&quot;</code></td>
 </tr>
 </tbody></table>
 <h3 id='http-response'>HTTP Response</h3><h4 id='success'>Success</h4>
@@ -544,7 +557,12 @@ a body that will be a JSON object encoded as string. The JSON object will have t
 <tr>
 <td><code>result.smsServerRequestId</code></td>
 <td>string</td>
-<td>A unique identifier from the SMS server side. This uniquely identifies your SMS request.</td>
+<td>A unique identifier from the SMS server side. This uniquely identifies your SMS request. It will value <code>null</code> if you schedule the SMS in the future.</td>
+</tr>
+<tr>
+<td><code>result.smsRequestScheduleId</code></td>
+<td>string</td>
+<td>A unique identifier of the schedule created when you schedule an SMS to be delivered in the future. It will have value <code>null</code> if you don&#39;t schedule.</td>
 </tr>
 </tbody></table>
 
@@ -991,7 +1009,35 @@ where the signing secret is used as a key and the string as the data.</li>
     <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">SecurityUtils</span><span class="p">.</span><span class="nf">secure_compare</span><span class="p">(</span><span class="n">digest</span><span class="p">,</span> <span class="n">incoming_signature</span><span class="p">)</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre></div><h2 id='more-api-endpoints-on-the-way'>More API Endpoints on the Way</h2>
+</code></pre></div><h2 id='scheduling-a-delivery-in-the-future'>Scheduling a Delivery in the Future</h2>
+<p>Read about it in the <a href="#sending-an-sms">Sending an SMS section</a>.</p>
+<h2 id='deleting-a-schedule'>Deleting a schedule</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Delete a schedule using the schedule identifier</span>
+<span class="c">#</span>
+curl <span class="nt">-v</span> <span class="nt">-X</span> DELETE <span class="s1">'https://sms-api.allsms.gr/v1/sms_request_schedules/e0b107da-669a-40f5-b4d0-24fc70409307'</span> <span class="se">\</span>
+<span class="nt">-H</span> <span class="s1">'Accept: application/json'</span> <span class="se">\</span>
+<span class="nt">-H</span> <span class="s1">'Authorization: Bearer 5a2a5816-5f32-4234-a9a1-7d59986c06a5
+</span></code></pre></div><div class="highlight"><pre class="highlight ruby tab-ruby"><code><span class="c1"># This Ruby example uses [Rest Client library](https://github.com/rest-client/rest-client).</span>
+<span class="c1"># You can use any other Ruby library that can construct standard HTTPS requests.</span>
+<span class="c1">#</span>
+<span class="nb">require</span> <span class="s1">'rest-client'</span>
+
+<span class="n">api_key</span> <span class="o">=</span> <span class="s1">'5a2a5816-5f32-4234-a9a1-7d59986c06a5'</span>
+
+<span class="c1"># Delete a schedule using the schedule identifier</span>
+<span class="c1">#</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://sms-api.allsms.gr/v1/sms_request_schedules/&lt;schedule-identifier&gt;'</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">'Accept'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">,</span>
+  <span class="s1">'Authorization'</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">"</span>
+<span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="p">.</span><span class="nf">delete</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span>
+</code></pre></div>
+<p>You can delete a schedule that you have created. This is only possible as long as the
+schedule has not fired.</p>
+
+<p>You have to pass the correct authorization headers as described <a href="#authentication">here</a></p>
+<h2 id='more-api-endpoints-on-the-way'>More API Endpoints on the Way</h2>
 <p>We are in the process of developing more API endpoints that will allow you to</p>
 
 <ul>
@@ -1041,9 +1087,9 @@ amount of times before you give up.</p>
     </span><span class="nl">"resultCode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"resultDescription"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ERROR: ..."</span><span class="p">,</span><span class="w">
     </span><span class="nl">"clientRequestId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"smsServerRequestId"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
-  </span><span class="p">}</span><span class="w">
+    </span><span class="nl">"smsServerRequestId"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div>
 <p>The body of the HTTP Response body, might give you more information about what was the problem. If it is
